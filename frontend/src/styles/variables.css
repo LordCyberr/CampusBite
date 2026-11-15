@@ -1,0 +1,112 @@
+/* CampusBite CSS Design Variables - Established via Hallmark Design System */
+:root {
+  /* Brand Colours */
+  --color-primary: #C8481B;
+  --color-primary-hover: #A83812;
+  --color-primary-tint: #FDF4EF;
+
+  /* Neutrals & Canvas */
+  --color-bg-page: #F8F6F2;
+  --color-bg-surface: #FFFFFF;
+  --color-border: #E5DFD5;
+  --color-border-subtle: #F0ECE4;
+
+  /* Typography Colours */
+  --color-text-primary: #231F1C;
+  --color-text-secondary: #645D56;
+  --color-text-muted: #8C847C;
+  --color-text-inverted: #FFFFFF;
+
+  /* Functional Status Colours */
+  --color-success: #1E7B48;
+  --color-success-surface: #EAF6EE;
+  --color-success-border: #BBE3C9;
+
+  --color-warning: #9A5B00;
+  --color-warning-surface: #FFF8EB;
+  --color-warning-border: #F7DEB0;
+
+  --color-error: #B92828;
+  --color-error-surface: #FDF0F0;
+  --color-error-border: #F6C1C1;
+
+  --color-info: #1C6488;
+  --color-info-surface: #EEF6FA;
+  --color-info-border: #BBDDEE;
+
+  /* Specific Order Status Colours */
+  --status-placed-bg: #FFF8EB;
+  --status-placed-text: #9A5B00;
+  --status-placed-border: #F7DEB0;
+
+  --status-accepted-bg: #EEF6FA;
+  --status-accepted-text: #1C6488;
+  --status-accepted-border: #BBDDEE;
+
+  --status-preparing-bg: #F4EEFD;
+  --status-preparing-text: #69359C;
+  --status-preparing-border: #DDC6F8;
+
+  --status-ready-bg: #EAF6EE;
+  --status-ready-text: #1E7B48;
+  --status-ready-border: #BBE3C9;
+
+  --status-assigned-bg: #EBF3FE;
+  --status-assigned-text: #1A569C;
+  --status-assigned-border: #B7D4FB;
+
+  --status-out-bg: #FDF4EF;
+  --status-out-text: #C8481B;
+  --status-out-border: #F5C7B3;
+
+  --status-delivered-bg: #EAF6EE;
+  --status-delivered-text: #135C34;
+  --status-delivered-border: #A0D8B4;
+
+  --status-cancelled-bg: #F3F4F6;
+  --status-cancelled-text: #4B5563;
+  --status-cancelled-border: #D1D5DB;
+
+  --status-refunded-bg: #FDF0F0;
+  --status-refunded-text: #B92828;
+  --status-refunded-border: #F6C1C1;
+
+  /* Typography Font Families */
+  --font-headings: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Type Scale */
+  --font-size-xs: 0.75rem;    /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-md: 1.125rem;   /* 18px */
+  --font-size-lg: 1.25rem;    /* 20px */
+  --font-size-xl: 1.5rem;     /* 24px */
+  --font-size-2xl: 1.875rem;  /* 30px */
+  --font-size-3xl: 2.25rem;   /* 36px */
+
+  /* Spacing Scale */
+  --space-1: 0.25rem;  /* 4px */
+  --space-2: 0.5rem;   /* 8px */
+  --space-3: 0.75rem;  /* 12px */
+  --space-4: 1rem;     /* 16px */
+  --space-5: 1.25rem;  /* 20px */
+  --space-6: 1.5rem;   /* 24px */
+  --space-8: 2rem;     /* 32px */
+  --space-10: 2.5rem;  /* 40px */
+  --space-12: 3rem;    /* 48px */
+
+  /* Border Radii */
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(35, 31, 28, 0.06);
+  --shadow-md: 0 4px 8px -1px rgba(35, 31, 28, 0.08), 0 2px 4px -1px rgba(35, 31, 28, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(35, 31, 28, 0.08), 0 4px 6px -2px rgba(35, 31, 28, 0.04);
+
+  /* Focus & Layout */
+  --focus-ring: 0 0 0 3px rgba(200, 72, 27, 0.25);
+  --container-max: 1200px;
+}

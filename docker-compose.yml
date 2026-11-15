@@ -1,0 +1,42 @@
+# ==============================================================================
+# CampusBite Multi-Container Orchestration (Docker Compose)
+# Runs the FastAPI backend service with persistent SQLite volume storage.
+# Secrets and API keys are injected at runtime via backend/.env (not hardcoded).
+# ==============================================================================
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: campusbite-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    # Runtime secrets and environment variables loaded from host backend/.env
+    env_file:
+      - ./backend/.env
+    environment:
+      # Enforce production security check (blocks startup if SECRET_KEY is placeholder)
+      - APP_ENV=production
+      # Persist SQLite database in the dedicated named Docker volume
+      - DATABASE_URL=sqlite:////data/campusbite.db
+      # Allow requests from the Vite frontend running on the host
+      - CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
+    volumes:
+      # Named volume for database persistence across container recreations
+      - campusbite-data:/data
+      # Volume for application logs
+      - campusbite-logs:/app/logs
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request, sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/health').getcode() == 200 else 1)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  campusbite-data:
+    name: campusbite-sqlite-data
+  campusbite-logs:
+    name: campusbite-app-logs

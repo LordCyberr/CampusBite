@@ -1,0 +1,64 @@
+# Git and version control
+.git
+.gitignore
+
+# Environment and sensitive configuration files
+.env
+.env.*
+!.env.example
+
+# Local SQLite databases and data files
+*.db
+*.db-journal
+*.sqlite3
+campusbite.db
+
+# Log files and application audit logs
+logs/
+*.log
+
+# Python bytecode and build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.env/
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Automated test directories and cache
+tests/
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# IDE and OS artifacts
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
