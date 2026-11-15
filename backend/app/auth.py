@@ -25,14 +25,16 @@ INSECURE_PLACEHOLDER_KEYS = {
     "your_secret_key_here",
 }
 
-def validate_secret_key(app_env: Optional[str] = None, secret_key: Optional[str] = None) -> str:
+_DEFAULT_UNSET = object()
+
+def validate_secret_key(app_env: Optional[str] = None, secret_key: object = _DEFAULT_UNSET) -> str:
     """
     Validates that SECRET_KEY is securely configured when APP_ENV is 'production'.
     In production: raises RuntimeError if SECRET_KEY is missing, empty, or a known placeholder.
     In development/test: falls back to default development key if missing.
     """
     env = (app_env if app_env is not None else os.getenv("APP_ENV", "development")).strip().lower()
-    raw_secret = secret_key if secret_key is not None else os.getenv("SECRET_KEY")
+    raw_secret = secret_key if secret_key is not _DEFAULT_UNSET else os.getenv("SECRET_KEY")
 
     if env == "production":
         if not raw_secret or not raw_secret.strip():
