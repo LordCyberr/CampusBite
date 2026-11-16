@@ -21,11 +21,13 @@ import OrderTimeline from '../components/OrderTimeline';
 import StatusBadge from '../components/StatusBadge';
 import Loader from '../components/Loader';
 import ErrorMessage from '../components/ErrorMessage';
+import { useCurrency } from '../context/CurrencyContext';
 
 const FINAL_STATES = ['DELIVERED', 'CANCELLED', 'REFUNDED'];
 
 const OrderDetail = () => {
   const { id } = useParams();
+  const { formatPrice } = useCurrency();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -212,7 +214,7 @@ const OrderDetail = () => {
               Order Refunded
             </h4>
             <p style={{ margin: 0, fontSize: 'var(--font-size-sm)', color: '#7f1d1d' }}>
-              This order was refunded in full. Amount: <strong>${Number(order.total_amount).toFixed(2)}</strong>
+              This order was refunded in full. Amount: <strong>{formatPrice(order.total_amount)}</strong>
               {order.return_reason ? ` • Reason: "${order.return_reason}"` : ''}
             </p>
           </div>
@@ -398,11 +400,11 @@ const OrderDetail = () => {
                   {item.quantity}x {item.dish_name || `Dish #${item.menu_item_id}`}
                 </span>
                 <span style={{ display: 'block', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
-                  Snapshot Price: ${Number(item.price_at_order).toFixed(2)}
+                  Snapshot Price: {formatPrice(item.price_at_order)}
                 </span>
               </div>
               <span style={{ fontWeight: 700, fontSize: 'var(--font-size-sm)' }}>
-                ${(item.quantity * item.price_at_order).toFixed(2)}
+                {formatPrice(item.quantity * item.price_at_order)}
               </span>
             </div>
           ))}
@@ -420,7 +422,7 @@ const OrderDetail = () => {
         >
           <span style={{ fontWeight: 700, fontSize: 'var(--font-size-base)' }}>Total Paid</span>
           <span style={{ fontWeight: 800, fontSize: 'var(--font-size-xl)', color: 'var(--color-primary)' }}>
-            ${Number(order.total_amount).toFixed(2)}
+            {formatPrice(order.total_amount)}
           </span>
         </div>
       </div>

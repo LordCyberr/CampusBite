@@ -19,10 +19,12 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { useCurrency } from '../context/CurrencyContext';
 
 const Navbar = () => {
   const { user, isAuthenticated, role, logout } = useAuth();
   const { totalCount } = useCart();
+  const { currencyMode, setCurrencyMode } = useCurrency();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -100,6 +102,31 @@ const Navbar = () => {
           }}
           className="desktop-nav"
         >
+          {/* Currency Mode Selector */}
+          <div className="currency-switcher" title="Select Currency Display">
+            <button
+              type="button"
+              className={`currency-btn ${currencyMode === 'both' ? 'active' : ''}`}
+              onClick={() => setCurrencyMode('both')}
+            >
+              $ & ₹
+            </button>
+            <button
+              type="button"
+              className={`currency-btn ${currencyMode === 'inr' ? 'active' : ''}`}
+              onClick={() => setCurrencyMode('inr')}
+            >
+              ₹ INR
+            </button>
+            <button
+              type="button"
+              className={`currency-btn ${currencyMode === 'usd' ? 'active' : ''}`}
+              onClick={() => setCurrencyMode('usd')}
+            >
+              $ USD
+            </button>
+          </div>
+
           {isAuthenticated ? (
             <>
               {/* Customer Links */}
@@ -321,6 +348,31 @@ const Navbar = () => {
           }}
           className="mobile-menu"
         >
+          {/* Currency Mode Selector */}
+          <div className="currency-switcher" title="Select Currency Display">
+            <button
+              type="button"
+              className={`currency-btn ${currencyMode === 'both' ? 'active' : ''}`}
+              onClick={() => setCurrencyMode('both')}
+            >
+              $ & ₹
+            </button>
+            <button
+              type="button"
+              className={`currency-btn ${currencyMode === 'inr' ? 'active' : ''}`}
+              onClick={() => setCurrencyMode('inr')}
+            >
+              ₹ INR
+            </button>
+            <button
+              type="button"
+              className={`currency-btn ${currencyMode === 'usd' ? 'active' : ''}`}
+              onClick={() => setCurrencyMode('usd')}
+            >
+              $ USD
+            </button>
+          </div>
+
           {isAuthenticated ? (
             <>
               <div style={{ paddingBottom: 'var(--space-2)', borderBottom: '1px solid var(--color-border)' }}>

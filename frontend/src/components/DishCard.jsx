@@ -1,149 +1,121 @@
-import React, { useState } from 'react';
-import { Plus, Minus, ShoppingBag, Check } from 'lucide-react';
+import React from 'react';
+import { Plus, Minus } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useCurrency } from '../context/CurrencyContext';
 
 const DishCard = ({ dish, restaurantId, restaurantName }) => {
-  const [quantity, setQuantity] = useState(1);
-  const [justAdded, setJustAdded] = useState(false);
-  const { addItem } = useCart();
+  const { items, addItem, updateQuantity } = useCart();
+  const { formatPrice } = useCurrency();
 
-  const handleAdd = () => {
+  // Find if this dish is already in the customer's cart
+  const cartItem = items.find((i) => i.menu_item_id === dish.id);
+  const inCartQty = cartItem ? cartItem.quantity : 0;
+
+  // Smart Veg / Non-Veg detection
+  const isNonVeg = /chicken|meat|beef|pork|bacon|pepperoni|fish|mutton|prawn/i.test(
+    `${dish.name} ${dish.description || ''}`
+  );
+
+  const handleAddFirst = () => {
     if (!dish.is_available) return;
-    const added = addItem(dish, restaurantId, restaurantName, quantity);
-    if (added) {
-      setJustAdded(true);
-      setTimeout(() => setJustAdded(false), 1200);
-      setQuantity(1); // Reset counter
-    }
+    addItem(dish, restaurantId, restaurantName, 1);
+  };
+
+  const handleIncrement = () => {
+    updateQuantity(dish.id, inCartQty + 1);
+  };
+
+  const handleDecrement = () => {
+    updateQuantity(dish.id, inCartQty - 1);
   };
 
   return (
     <div
-      className="card"
+      className="card card-hoverable"
       style={{
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        opacity: dish.is_available ? 1 : 0.7,
+        opacity: dish.is_available ? 1 : 0.65,
+        position: 'relative',
+        borderRadius: 'var(--radius)',
+        border: inCartQty > 0 ? '1.5px solid var(--color-primary)' : '1px solid var(--color-border)',
+        boxShadow: inCartQty > 0 ? '0 4px 16px rgba(255, 79, 24, 0.12)' : undefined,
       }}
     >
       <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 'var(--space-2)', marginBottom: 'var(--space-2)' }}>
-          <h4 style={{ fontSize: 'var(--font-size-md)', color: 'var(--color-text-primary)' }}>
-            {dish.name}
-          </h4>
+        {/* Header: Veg/Non-Veg icon & Price */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px', marginBottom: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span className={isNonVeg ? 'nonveg-badge' : 'veg-badge'} title={isNonVeg ? 'Non-Vegetarian' : 'Vegetarian'} />
+            <h4 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--color-text-primary)' }}>
+              {dish.name}
+            </h4>
+          </div>
           <span
             style={{
-              fontWeight: 700,
+              fontWeight: 800,
               color: 'var(--color-primary)',
-              fontSize: 'var(--font-size-md)',
+              fontSize: '15px',
               whiteSpace: 'nowrap',
+              fontFamily: 'var(--font-headings)',
             }}
           >
-            ${Number(dish.price).toFixed(2)}
+            {formatPrice(dish.price)}
           </span>
         </div>
 
         <p
           style={{
-            fontSize: 'var(--font-size-sm)',
+            fontSize: '13px',
             color: 'var(--color-text-secondary)',
-            marginBottom: 'var(--space-4)',
-            minHeight: '38px',
+            marginBottom: '16px',
+            lineHeight: 1.45,
+            minHeight: '36px',
           }}
         >
-          {dish.description || 'Prepared fresh daily by kitchen chefs.'}
+          {dish.description || 'Prepared fresh upon order with quality ingredients.'}
         </p>
       </div>
 
-      <div>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: '8px' }}>
         {dish.is_available ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginTop: 'var(--space-2)' }}>
-            {/* Quantity Stepper */}
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                border: '1px solid var(--color-border)',
-                borderRadius: 'var(--radius)',
-                backgroundColor: 'var(--color-bg-page)',
-              }}
-            >
-              <button
-                type="button"
-                className="btn-secondary"
-                style={{
-                  padding: 'var(--space-2)',
-                  border: 'none',
-                  background: 'transparent',
-                }}
-                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                aria-label="Decrease Quantity"
-              >
-                <Minus size={14} />
+          inCartQty > 0 ? (
+            /* Swiggy Stepper when already in cart */
+            <div className="swiggy-stepper">
+              <button type="button" onClick={handleDecrement} aria-label="Decrease Quantity">
+                <Minus size={13} />
               </button>
-              <span
-                style={{
-                  padding: '0 var(--space-2)',
-                  fontSize: 'var(--font-size-sm)',
-                  fontWeight: 600,
-                  minWidth: '24px',
-                  textAlign: 'center',
-                }}
-              >
-                {quantity}
-              </span>
-              <button
-                type="button"
-                className="btn-secondary"
-                style={{
-                  padding: 'var(--space-2)',
-                  border: 'none',
-                  background: 'transparent',
-                }}
-                onClick={() => setQuantity((q) => q + 1)}
-                aria-label="Increase Quantity"
-              >
-                <Plus size={14} />
+              <span>{inCartQty}</span>
+              <button type="button" onClick={handleIncrement} aria-label="Increase Quantity">
+                <Plus size={13} />
               </button>
             </div>
-
-            {/* Add Button */}
+          ) : (
+            /* Swiggy ADD Button */
             <button
               type="button"
-              className={justAdded ? 'btn-secondary' : 'btn-primary'}
-              style={{
-                flex: 1,
-                backgroundColor: justAdded ? 'var(--color-success-surface)' : undefined,
-                color: justAdded ? 'var(--color-success)' : undefined,
-                borderColor: justAdded ? 'var(--color-success-border)' : undefined,
-              }}
-              onClick={handleAdd}
+              className="btn-swiggy-add"
+              onClick={handleAddFirst}
+              aria-label={`Add ${dish.name} to Cart`}
             >
-              {justAdded ? (
-                <>
-                  <Check size={16} /> Added!
-                </>
-              ) : (
-                <>
-                  <ShoppingBag size={16} /> Add to Cart
-                </>
-              )}
+              ADD +
             </button>
-          </div>
+          )
         ) : (
           <div
             style={{
-              padding: 'var(--space-2) var(--space-3)',
+              padding: '4px 12px',
               background: 'var(--color-border-subtle)',
-              borderRadius: 'var(--radius)',
+              borderRadius: 'var(--radius-sm)',
               color: 'var(--color-text-muted)',
-              fontSize: 'var(--font-size-xs)',
-              fontWeight: 600,
-              textAlign: 'center',
+              fontSize: '12px',
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              letterSpacing: '0.04em',
             }}
           >
-            Currently Unavailable
+            Sold Out
           </div>
         )}
       </div>

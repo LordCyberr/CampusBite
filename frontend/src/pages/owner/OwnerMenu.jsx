@@ -23,6 +23,7 @@ import {
   deleteMenuItem,
 } from '../../api/owner';
 import { fetchRestaurantMenu } from '../../api/restaurants';
+import { useCurrency } from '../../context/CurrencyContext';
 import Loader from '../../components/Loader';
 import ErrorMessage from '../../components/ErrorMessage';
 import EmptyState from '../../components/EmptyState';
@@ -31,6 +32,7 @@ import Pagination from '../../components/Pagination';
 const PAGE_SIZE = 8;
 
 const OwnerMenu = () => {
+  const { formatPrice } = useCurrency();
   const [restaurant, setRestaurant] = useState(null);
   const [dishes, setDishes] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -415,7 +417,7 @@ const OwnerMenu = () => {
                     </td>
 
                     <td style={{ padding: 'var(--space-3) var(--space-4)', fontWeight: 700, color: 'var(--color-primary)' }}>
-                      ${Number(dish.price).toFixed(2)}
+                      {formatPrice(dish.price)}
                     </td>
 
                     <td style={{ padding: 'var(--space-3) var(--space-4)' }}>

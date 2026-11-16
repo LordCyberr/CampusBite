@@ -72,27 +72,57 @@ const Restaurants = () => {
           </p>
         </div>
 
-        {/* Search Bar */}
-        <div style={{ position: 'relative', maxWidth: '480px' }}>
-          <Search
-            size={18}
-            style={{
-              position: 'absolute',
-              left: 'var(--space-3)',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              color: 'var(--color-text-muted)',
-              pointerEvents: 'none',
-            }}
-          />
-          <input
-            type="text"
-            placeholder="Search canteens and kitchens by name..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ paddingLeft: 'var(--space-8)' }}
-            aria-label="Search Restaurants"
-          />
+        {/* Search Bar & Quick Category Chips */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', maxWidth: '640px' }}>
+          <div style={{ position: 'relative' }}>
+            <Search
+              size={18}
+              style={{
+                position: 'absolute',
+                left: 'var(--space-3)',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: 'var(--color-text-muted)',
+                pointerEvents: 'none',
+              }}
+            />
+            <input
+              type="text"
+              placeholder="Search canteens and kitchens by name..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{ paddingLeft: 'var(--space-8)' }}
+              aria-label="Search Restaurants"
+            />
+          </div>
+
+          {/* Swiggy Quick Filter Pills */}
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              className={`btn-secondary btn-sm ${searchTerm === '' ? 'btn-primary' : ''}`}
+              style={{ borderRadius: 'var(--radius-full)', padding: '4px 12px', fontSize: '12px' }}
+              onClick={() => setSearchTerm('')}
+            >
+              All Canteens
+            </button>
+            <button
+              type="button"
+              className={`btn-secondary btn-sm ${searchTerm === 'Pizza' ? 'btn-primary' : ''}`}
+              style={{ borderRadius: 'var(--radius-full)', padding: '4px 12px', fontSize: '12px' }}
+              onClick={() => setSearchTerm('Pizza')}
+            >
+              🍕 Pizzeria
+            </button>
+            <button
+              type="button"
+              className={`btn-secondary btn-sm ${searchTerm === 'Spice' ? 'btn-primary' : ''}`}
+              style={{ borderRadius: 'var(--radius-full)', padding: '4px 12px', fontSize: '12px' }}
+              onClick={() => setSearchTerm('Spice')}
+            >
+              🍛 Curries & Bowls
+            </button>
+          </div>
         </div>
       </div>
 

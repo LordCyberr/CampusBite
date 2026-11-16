@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { RotateCcw, Check, X, AlertTriangle, ShieldCheck } from 'lucide-react';
 import { fetchOwnerReturns, decideReturnRequest } from '../../api/owner';
+import { useCurrency } from '../../context/CurrencyContext';
 import StatusBadge from '../../components/StatusBadge';
 import Loader from '../../components/Loader';
 import ErrorMessage from '../../components/ErrorMessage';
@@ -10,6 +11,7 @@ import Pagination from '../../components/Pagination';
 const PAGE_SIZE = 8;
 
 const OwnerReturns = () => {
+  const { formatPrice } = useCurrency();
   const [returns, setReturns] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(1);
@@ -136,7 +138,7 @@ const OwnerReturns = () => {
                         Student: <strong>{order.customer_name || `Customer #${order.customer_id}`}</strong>
                       </span>
                       <span style={{ fontSize: 'var(--font-size-base)', fontWeight: 800, color: 'var(--color-primary)' }}>
-                        ${Number(order.total_amount).toFixed(2)}
+                        {formatPrice(order.total_amount)}
                       </span>
                     </div>
                   </div>
@@ -185,8 +187,7 @@ const OwnerReturns = () => {
                           onClick={() => handleDecision(order.id, 'approve')}
                           style={{ backgroundColor: 'var(--color-success)' }}
                         >
-                          <Check size={14} /> Approve & Refund ($
-                          {Number(order.total_amount).toFixed(2)})
+                          <Check size={14} /> Approve & Refund ({formatPrice(order.total_amount)})
                         </button>
                       </>
                     ) : (

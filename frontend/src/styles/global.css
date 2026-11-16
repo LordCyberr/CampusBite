@@ -159,13 +159,186 @@ button:disabled {
   padding-bottom: var(--space-12);
 }
 
-/* Responsive Cards */
+/* Responsive Cards with Smooth Hover Elevation */
 .card {
   background-color: var(--color-bg-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   padding: var(--space-5);
   box-shadow: var(--shadow-sm);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.card-hoverable:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--color-border-subtle);
+}
+
+/* Veg / Non-Veg Indicator Icons */
+.veg-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid var(--color-veg);
+  border-radius: 4px;
+  background-color: #FFFFFF;
+  flex-shrink: 0;
+}
+.veg-badge::after {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--color-veg);
+}
+
+.nonveg-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid var(--color-nonveg);
+  border-radius: 4px;
+  background-color: #FFFFFF;
+  flex-shrink: 0;
+}
+.nonveg-badge::after {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--color-nonveg);
+}
+
+/* Rating Badges (Swiggy/Zomato style) */
+.rating-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background-color: var(--color-rating-green);
+  color: #FFFFFF;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* Swiggy Modern ADD Button & Stepper */
+.btn-swiggy-add {
+  background: #FFFFFF;
+  color: var(--color-primary);
+  border: 1.5px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  padding: 6px 18px;
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(255, 79, 24, 0.12);
+  transition: all 0.15s ease;
+}
+.btn-swiggy-add:hover:not(:disabled) {
+  background: var(--color-primary);
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(255, 79, 24, 0.25);
+}
+
+.swiggy-stepper {
+  display: inline-flex;
+  align-items: center;
+  background: #FFFFFF;
+  border: 1.5px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(255, 79, 24, 0.15);
+}
+.swiggy-stepper button {
+  background: transparent;
+  color: var(--color-primary);
+  border: none;
+  padding: 5px 10px;
+  font-weight: 800;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 0;
+  transition: background-color 0.15s ease;
+}
+.swiggy-stepper button:hover {
+  background: var(--color-primary-tint);
+}
+.swiggy-stepper span {
+  padding: 0 8px;
+  font-weight: 700;
+  color: var(--color-primary);
+  font-size: var(--font-size-sm);
+  min-width: 20px;
+  text-align: center;
+}
+
+/* Floating Bottom Cart Bar */
+.floating-cart-bar {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  max-width: 800px;
+  background: #1C1C1C;
+  color: #FFFFFF;
+  border-radius: var(--radius);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.28);
+  z-index: 1000;
+  animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 25px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* Currency Pill Switcher */
+.currency-switcher {
+  display: inline-flex;
+  align-items: center;
+  background: var(--color-bg-page);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  padding: 2px;
+  gap: 2px;
+}
+.currency-btn {
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.currency-btn.active {
+  background: var(--color-primary);
+  color: #FFFFFF;
+  box-shadow: 0 1px 4px rgba(255, 79, 24, 0.25);
 }
 
 /* Status Badges */

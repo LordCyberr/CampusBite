@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ShieldCheck, MapPin, AlertCircle, ShoppingBag, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useCurrency } from '../context/CurrencyContext';
 import { createOrder } from '../api/orders';
 
 const Checkout = () => {
   const { restaurantId, restaurantName, items, totalAmount, clearCart } = useCart();
+  const { formatPrice } = useCurrency();
   const [deliveryAddress, setDeliveryAddress] = useState('Dormitory B, Room 204');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -143,7 +145,7 @@ const Checkout = () => {
                   <strong>{item.quantity}x</strong> {item.name}
                 </span>
                 <span style={{ fontWeight: 600 }}>
-                  ${(item.price * item.quantity).toFixed(2)}
+                  {formatPrice(item.price * item.quantity)}
                 </span>
               </div>
             ))}
@@ -159,7 +161,7 @@ const Checkout = () => {
           >
             <span style={{ fontWeight: 700, fontSize: 'var(--font-size-base)' }}>Order Total:</span>
             <span style={{ fontWeight: 800, fontSize: 'var(--font-size-xl)', color: 'var(--color-primary)' }}>
-              ${totalAmount.toFixed(2)}
+              {formatPrice(totalAmount)}
             </span>
           </div>
         </div>
@@ -196,7 +198,7 @@ const Checkout = () => {
           disabled={loading}
         >
           <CheckCircle2 size={20} />
-          <span>{loading ? 'Processing Order...' : `Confirm & Place Order ($${totalAmount.toFixed(2)})`}</span>
+          <span>{loading ? 'Processing Order...' : `Confirm & Place Order (${formatPrice(totalAmount)})`}</span>
         </button>
       </form>
     </div>

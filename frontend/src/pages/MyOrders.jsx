@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ClipboardList, Filter, ArrowRight, Calendar, RotateCcw } from 'lucide-react';
 import { fetchMyOrders } from '../api/orders';
+import { useCurrency } from '../context/CurrencyContext';
 import StatusBadge from '../components/StatusBadge';
 import Loader from '../components/Loader';
 import ErrorMessage from '../components/ErrorMessage';
@@ -24,6 +25,7 @@ const STATUS_OPTIONS = [
 ];
 
 const MyOrders = () => {
+  const { formatPrice } = useCurrency();
   const [orders, setOrders] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(1);
@@ -222,7 +224,7 @@ const MyOrders = () => {
                         Total Amount
                       </span>
                       <span style={{ fontSize: 'var(--font-size-lg)', fontWeight: 800, color: 'var(--color-text-primary)' }}>
-                        ${Number(order.total_amount).toFixed(2)}
+                        {formatPrice(order.total_amount)}
                       </span>
                     </div>
 

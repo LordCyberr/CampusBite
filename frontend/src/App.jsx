@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import FloatingCart from './components/FloatingCart';
 import ProtectedRoute from './components/ProtectedRoute';
 
 // Public & Customer Pages
@@ -145,6 +146,7 @@ function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
+      <FloatingCart />
     </div>
   );
 }

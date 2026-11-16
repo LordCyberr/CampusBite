@@ -12,12 +12,14 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { fetchOwnerStats, fetchOwnerReminders } from '../../api/owner';
+import { useCurrency } from '../../context/CurrencyContext';
 import StatusBadge from '../../components/StatusBadge';
 import Loader from '../../components/Loader';
 import ErrorMessage from '../../components/ErrorMessage';
 import EmptyState from '../../components/EmptyState';
 
 const OwnerDashboard = () => {
+  const { formatPrice } = useCurrency();
   const [stats, setStats] = useState(null);
   const [reminders, setReminders] = useState([]);
   const [includeResolved, setIncludeResolved] = useState(false);
@@ -135,7 +137,7 @@ const OwnerDashboard = () => {
             <DollarSign size={18} color="var(--color-success)" />
           </div>
           <h2 style={{ fontSize: 'var(--font-size-2xl)', color: 'var(--color-success)' }}>
-            ${Number(stats.total_revenue).toFixed(2)}
+            {formatPrice(stats.total_revenue)}
           </h2>
           <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', marginTop: 'var(--space-1)' }}>
             Strictly delivered orders (refunds excluded)

@@ -155,46 +155,67 @@ const Login = () => {
           </Link>
         </p>
 
-        {/* Demo Logins Box for Viva / Evaluation (controlled by VITE_SHOW_DEMO_LOGINS) */}
-        {import.meta.env.VITE_SHOW_DEMO_LOGINS === 'true' && (
-          <div
-            style={{
-              marginTop: 'var(--space-6)',
-              paddingTop: 'var(--space-4)',
-              borderTop: '1px solid var(--color-border)',
-              fontSize: 'var(--font-size-xs)',
-              color: 'var(--color-text-secondary)',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-1)', marginBottom: 'var(--space-2)', fontWeight: 600 }}>
-              <Info size={14} color="var(--color-primary)" />
-              <span>Quick Demo Logins (Password: password123):</span>
-            </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-2)' }}>
-              <button
-                type="button"
-                className="btn-secondary btn-sm"
-                onClick={() => fillDemo('customer@campusbite.com')}
-              >
-                Student (Alex)
-              </button>
-              <button
-                type="button"
-                className="btn-secondary btn-sm"
-                onClick={() => fillDemo('owner1@campusbite.com')}
-              >
-                Owner (Mario)
-              </button>
-              <button
-                type="button"
-                className="btn-secondary btn-sm"
-                onClick={() => fillDemo('delivery@campusbite.com')}
-              >
-                Courier (Sam)
-              </button>
-            </div>
+        {/* 1-Click Demo Logins for Evaluator & Viva Demo */}
+        <div
+          style={{
+            marginTop: 'var(--space-6)',
+            paddingTop: 'var(--space-4)',
+            borderTop: '1px solid var(--color-border)',
+            fontSize: 'var(--font-size-xs)',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px', fontWeight: 700, color: 'var(--color-text-primary)' }}>
+            <Info size={14} color="var(--color-primary)" />
+            <span>1-Click Demo Accounts (password: password123):</span>
           </div>
-        )}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+            <button
+              type="button"
+              className="btn-secondary btn-sm"
+              style={{
+                fontSize: '11px',
+                padding: '6px 4px',
+                borderRadius: '8px',
+                borderColor: email === 'customer@campusbite.com' ? 'var(--color-primary)' : undefined,
+                background: email === 'customer@campusbite.com' ? 'var(--color-primary-tint)' : undefined,
+                fontWeight: 600,
+              }}
+              onClick={() => fillDemo('customer@campusbite.com')}
+            >
+              🎓 Student
+            </button>
+            <button
+              type="button"
+              className="btn-secondary btn-sm"
+              style={{
+                fontSize: '11px',
+                padding: '6px 4px',
+                borderRadius: '8px',
+                borderColor: email === 'owner1@campusbite.com' ? 'var(--color-primary)' : undefined,
+                background: email === 'owner1@campusbite.com' ? 'var(--color-primary-tint)' : undefined,
+                fontWeight: 600,
+              }}
+              onClick={() => fillDemo('owner1@campusbite.com')}
+            >
+              🍳 Kitchen
+            </button>
+            <button
+              type="button"
+              className="btn-secondary btn-sm"
+              style={{
+                fontSize: '11px',
+                padding: '6px 4px',
+                borderRadius: '8px',
+                borderColor: email === 'delivery@campusbite.com' ? 'var(--color-primary)' : undefined,
+                background: email === 'delivery@campusbite.com' ? 'var(--color-primary-tint)' : undefined,
+                fontWeight: 600,
+              }}
+              onClick={() => fillDemo('delivery@campusbite.com')}
+            >
+              🚴 Courier
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

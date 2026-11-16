@@ -14,6 +14,7 @@ import {
   fetchDeliveryPartners,
   assignDeliveryPartner,
 } from '../../api/owner';
+import { useCurrency } from '../../context/CurrencyContext';
 import StatusBadge from '../../components/StatusBadge';
 import Loader from '../../components/Loader';
 import ErrorMessage from '../../components/ErrorMessage';
@@ -33,6 +34,7 @@ const STATUS_OPTIONS = ['ALL', 'PLACED', 'ACCEPTED', 'PREPARING', 'READY', 'ASSI
  * independently enforces the transition sequence, roles, and ownership on every request.
  */
 const OwnerOrders = () => {
+  const { formatPrice } = useCurrency();
   const [orders, setOrders] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(1);
@@ -248,7 +250,7 @@ const OwnerOrders = () => {
                         Customer: <strong>{order.customer_name || `Student #${order.customer_id}`}</strong>
                       </span>
                       <span style={{ fontSize: 'var(--font-size-base)', fontWeight: 800, color: 'var(--color-primary)' }}>
-                        ${Number(order.total_amount).toFixed(2)}
+                        {formatPrice(order.total_amount)}
                       </span>
                     </div>
                   </div>

@@ -13,11 +13,13 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { fetchDeliveryOrders, updateDeliveryOrderStatus } from '../../api/delivery';
+import { useCurrency } from '../../context/CurrencyContext';
 import StatusBadge from '../../components/StatusBadge';
 import Loader from '../../components/Loader';
 import ErrorMessage from '../../components/ErrorMessage';
 
 const DeliveryDashboard = () => {
+  const { formatPrice } = useCurrency();
   const [activeTab, setActiveTab] = useState('active'); // 'active' | 'history'
   const [statusFilter, setStatusFilter] = useState('ALL'); // For active tab: 'ALL' | 'ASSIGNED' | 'OUT_FOR_DELIVERY'
   const [orders, setOrders] = useState([]);
@@ -439,7 +441,7 @@ const DeliveryDashboard = () => {
                       Total Amount:
                     </span>
                     <strong style={{ fontSize: 'var(--font-size-base)', color: 'var(--color-text-primary)' }}>
-                      ${Number(order.total_amount).toFixed(2)}
+                      {formatPrice(order.total_amount)}
                     </strong>
                   </div>
                 </div>

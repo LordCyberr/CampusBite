@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingBag, Trash2, Plus, Minus, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useCurrency } from '../context/CurrencyContext';
 import EmptyState from '../components/EmptyState';
 
 const Cart = () => {
@@ -15,6 +16,7 @@ const Cart = () => {
     removeItem,
     clearCart,
   } = useCart();
+  const { formatPrice } = useCurrency();
 
   const navigate = useNavigate();
 
@@ -80,7 +82,7 @@ const Cart = () => {
                   {item.name}
                 </h4>
                 <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>
-                  ${Number(item.price).toFixed(2)} each
+                  {formatPrice(item.price)} each
                 </p>
               </div>
 
@@ -132,7 +134,7 @@ const Cart = () => {
                     fontSize: 'var(--font-size-base)',
                   }}
                 >
-                  ${(item.price * item.quantity).toFixed(2)}
+                  {formatPrice(item.price * item.quantity)}
                 </span>
 
                 <button
@@ -162,8 +164,8 @@ const Cart = () => {
           <span style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-sm)' }}>
             Items Subtotal ({totalCount} items)
           </span>
-          <span style={{ fontWeight: 600, fontSize: 'var(--font-size-base)' }}>
-            ${totalAmount.toFixed(2)}
+          <span style={{ fontWeight: 700, fontSize: 'var(--font-size-base)' }}>
+            {formatPrice(totalAmount)}
           </span>
         </div>
 
@@ -171,7 +173,7 @@ const Cart = () => {
           <span style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-sm)' }}>
             Campus Delivery Fee
           </span>
-          <span style={{ fontWeight: 600, color: 'var(--color-success)', fontSize: 'var(--font-size-sm)' }}>
+          <span style={{ fontWeight: 600, color: 'var(--color-veg)', fontSize: 'var(--font-size-sm)' }}>
             FREE (Campus Student Courier)
           </span>
         </div>
@@ -190,7 +192,7 @@ const Cart = () => {
             Estimated Total
           </span>
           <span style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 800, color: 'var(--color-primary)' }}>
-            ${totalAmount.toFixed(2)}
+            {formatPrice(totalAmount)}
           </span>
         </div>
 
