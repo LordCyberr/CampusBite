@@ -171,7 +171,7 @@ const Checkout = () => {
           style={{
             padding: 'var(--space-4)',
             backgroundColor: 'var(--color-primary-tint)',
-            border: '1px solid #f5c7b3',
+            border: '1px solid var(--color-border)',
             borderRadius: 'var(--radius)',
             display: 'flex',
             alignItems: 'flex-start',

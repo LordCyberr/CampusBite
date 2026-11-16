@@ -20,6 +20,7 @@ from app.models import (
     PaymentType,
     Review,
     UserRole,
+    AdminReminderLog,
 )
 from app.auth import hash_password, create_access_token
 
@@ -33,6 +34,7 @@ def setup_roles_environment():
     db = SessionLocal()
     try:
         # 1. Clean previous records in isolated test run
+        db.query(AdminReminderLog).delete()
         db.query(Review).delete()
         db.query(PaymentLedger).delete()
         db.query(OrderItem).delete()
