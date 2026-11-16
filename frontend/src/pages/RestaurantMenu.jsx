@@ -3,7 +3,6 @@ import { useParams, Link } from 'react-router-dom';
 import {
   ArrowLeft,
   Search,
-  Filter,
   UtensilsCrossed,
   MapPin,
   X,
@@ -27,8 +26,11 @@ const PAGE_SIZE = 8;
 const REVIEWS_PAGE_SIZE = 5;
 
 const COVER_IMAGES = {
-  pizza: 'https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?w=1200&auto=format&fit=crop&q=80',
-  curry: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&auto=format&fit=crop&q=80',
+  chai: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=1200&auto=format&fit=crop&q=80',
+  dosa: 'https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=1200&auto=format&fit=crop&q=80',
+  roll: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=1200&auto=format&fit=crop&q=80',
+  curry: 'https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=1200&auto=format&fit=crop&q=80',
+  pizza: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=1200&auto=format&fit=crop&q=80',
   burger: 'https://images.unsplash.com/photo-1550547660-d9450f859349?w=1200&auto=format&fit=crop&q=80',
   cafe: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=1200&auto=format&fit=crop&q=80',
   default: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1200&auto=format&fit=crop&q=80',
@@ -137,15 +139,37 @@ const RestaurantMenu = () => {
 
   // Determine cover image and cuisine
   const nameLower = (restaurant?.name || '').toLowerCase();
-  const coverImg = /pizza/i.test(nameLower)
-    ? COVER_IMAGES.pizza
-    : /spice|curry|junction/i.test(nameLower)
+  const isChai = /chai|tapri|nescafe|maggi|tea/i.test(nameLower);
+  const isSouth = /anna|dosa|idli|south|udupi|tiffin/i.test(nameLower);
+  const isRoll = /roll|kathi|shawarma|frankie|street/i.test(nameLower);
+  const isCurry = /spice|junction|curry|dhaba|thali|biryani/i.test(nameLower);
+  const isPizza = /pizza/i.test(nameLower);
+
+  const coverImg = isChai
+    ? COVER_IMAGES.chai
+    : isSouth
+    ? COVER_IMAGES.dosa
+    : isRoll
+    ? COVER_IMAGES.roll
+    : isCurry
     ? COVER_IMAGES.curry
-    : /burger/i.test(nameLower)
-    ? COVER_IMAGES.burger
-    : /cafe|coffee|dessert/i.test(nameLower)
-    ? COVER_IMAGES.cafe
+    : isPizza
+    ? COVER_IMAGES.pizza
     : COVER_IMAGES.default;
+
+  const campusBuilding = isChai
+    ? 'Library Lawn • Near Gate 2'
+    : isSouth
+    ? 'Mess Complex • Block A'
+    : isRoll
+    ? 'Hostel 4 Night Canteen'
+    : isCurry
+    ? 'Central Food Court • Level 1'
+    : isPizza
+    ? 'Student Activity Centre (SAC)'
+    : 'Central Campus Food Court';
+
+  const deliveryTime = isChai ? '10-15 min' : isRoll ? '12-18 min' : '15-20 min';
 
   return (
     <div className="container page-wrapper">
@@ -295,12 +319,12 @@ const RestaurantMenu = () => {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <Clock size={15} color="var(--color-primary)" />
-                <span style={{ fontWeight: 600 }}>15-20 min campus delivery</span>
+                <span style={{ fontWeight: 600 }}>{deliveryTime} campus delivery</span>
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <MapPin size={15} color="var(--color-primary)" />
-                <span>Central Campus Food Court</span>
+                <span>{campusBuilding}</span>
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>

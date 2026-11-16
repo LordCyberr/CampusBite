@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Utensils, Sparkles, Star, Clock, Tag, X, ArrowRight } from 'lucide-react';
+import { Search, Utensils, Sparkles, Star, Clock, Tag, X } from 'lucide-react';
 import { fetchRestaurants } from '../api/restaurants';
 import RestaurantCard from '../components/RestaurantCard';
 import Loader from '../components/Loader';
@@ -7,17 +7,17 @@ import ErrorMessage from '../components/ErrorMessage';
 import EmptyState from '../components/EmptyState';
 import Pagination from '../components/Pagination';
 
-const PAGE_SIZE = 6;
+const PAGE_SIZE = 12;
 
 const CATEGORIES = [
-  { id: 'all', label: 'All', icon: '🍽️', query: '' },
-  { id: 'pizza', label: 'Pizza & Italian', icon: '🍕', query: 'Pizza' },
-  { id: 'curry', label: 'Curries & Bowls', icon: '🍛', query: 'Spice' },
-  { id: 'burger', label: 'Burgers & Fries', icon: '🍔', query: 'Burger' },
-  { id: 'sandwich', label: 'Sandwiches', icon: '🥪', query: 'Sandwich' },
-  { id: 'drinks', label: 'Shakes & Brews', icon: '🥤', query: 'Cafe' },
-  { id: 'veg', label: 'Pure Veg', icon: '🥗', query: 'Veg' },
-  { id: 'dessert', label: 'Bakery & Sweets', icon: '🍰', query: 'Bake' },
+  { id: 'all', label: 'Sab Kuch (All)', icon: '🍽️', matcher: () => true },
+  { id: 'chai_maggi', label: 'Chai & Maggi', icon: '☕', matcher: (r) => /chai|tapri|nescafe|maggi|samosa|tea|pakora|coffee|bun maska/i.test(`${r.name} ${r.description}`) },
+  { id: 'thali_biryani', label: 'Thalis & Biryani', icon: '🍛', matcher: (r) => /spice|junction|dhaba|thali|biryani|curry|dal|chole|rajma|roti|paratha/i.test(`${r.name} ${r.description}`) },
+  { id: 'dosa', label: 'Dosa & Tiffins', icon: '🥞', matcher: (r) => /anna|dosa|idli|south|udupi|tiffin|vada|sambar/i.test(`${r.name} ${r.description}`) },
+  { id: 'rolls', label: 'Kathi Rolls & Chaat', icon: '🌯', matcher: (r) => /roll|kathi|shawarma|frankie|street|chaat|bites|kolkata/i.test(`${r.name} ${r.description}`) },
+  { id: 'pizza', label: 'Desi Pizza & Italian', icon: '🍕', matcher: (r) => /pizza|italian|cafe|mario|bread/i.test(`${r.name} ${r.description}`) },
+  { id: 'veg', label: '100% Pure Veg', icon: '🌱', matcher: (r) => /dosa|tiffin|chai|tapri/i.test(`${r.name} ${r.description}`) || !/chicken|pepperoni|meat/i.test(`${r.name} ${r.description}`) },
+  { id: 'mithai', label: 'Mithai & Shakes', icon: '🍨', matcher: (r) => /sweet|dessert|mithai|bakery|shake|lassi|chai|coffee|brownie|jamun/i.test(`${r.name} ${r.description}`) },
 ];
 
 const Restaurants = () => {
@@ -61,16 +61,14 @@ const Restaurants = () => {
   };
 
   useEffect(() => {
-    let active = true;
     loadData();
-    return () => {
-      active = false;
-    };
   }, [page, debouncedSearch]);
 
   const handleCategoryClick = (cat) => {
-    setActiveCategory(cat.id);
-    setSearchTerm(cat.query);
+    // Toggle back to 'all' if clicked again, otherwise activate selected category
+    setActiveCategory((prev) => (prev === cat.id ? 'all' : cat.id));
+    setPage(1);
+    // Crucial: searchTerm is NOT modified! The search bar stays clean and independent.
   };
 
   const handleClearFilters = () => {
@@ -82,10 +80,18 @@ const Restaurants = () => {
     setPage(1);
   };
 
-  // Client-side quick filter overlays (rating & fast delivery)
+  // Find active category definition
+  const activeCategoryObj = CATEGORIES.find((c) => c.id === activeCategory) || CATEGORIES[0];
+
+  // Filtering: Category matcher, rating, and fast delivery
   const displayedRestaurants = restaurants.filter((r) => {
+    if (activeCategory !== 'all' && activeCategoryObj?.matcher && !activeCategoryObj.matcher(r)) {
+      return false;
+    }
     if (filterRating4Plus && Number(r.average_rating || 4.8) < 4.5) return false;
-    if (filterFastDelivery && !/pizza|slice|express/i.test(r.name)) return false;
+    if (filterFastDelivery && !/chai|tapri|roll|dosa|express|fast|pizza|slice/i.test(`${r.name} ${r.description}`)) {
+      return false;
+    }
     return true;
   });
 
@@ -118,90 +124,35 @@ const Restaurants = () => {
         </div>
       </div>
 
-      {/* 2. Uber Eats "Special Offers" Hero Banner */}
+      {/* 2. Campus Special Offers Hero Banner */}
       <div className="uber-promo-banner">
         <div style={{ maxWidth: '580px', zIndex: 1 }}>
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              backgroundColor: 'rgba(255, 79, 24, 0.2)',
-              border: '1px solid rgba(255, 79, 24, 0.4)',
-              color: '#FF7A45',
-              borderRadius: 'var(--radius-full)',
-              padding: '4px 12px',
-              fontSize: '11px',
-              fontWeight: 800,
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              marginBottom: '12px',
-            }}
-          >
-            <Sparkles size={12} /> Special Campus Offers • Limited Time
+          <div className="promo-tag-pill">
+            <Sparkles size={12} /> Desi Campus Specials • Garma-Garam Bites
           </div>
 
-          <h2
-            style={{
-              fontSize: '24px',
-              fontWeight: 800,
-              color: '#FFFFFF',
-              lineHeight: 1.25,
-              marginBottom: '8px',
-            }}
-          >
-            Craving Fresh Bites Between Lectures?
+          <h2 className="promo-banner-title">
+            Craving Hot Canteen Bites Between Lectures?
           </h2>
 
-          <p
-            style={{
-              color: '#94A3B8',
-              fontSize: '14px',
-              lineHeight: 1.5,
-              marginBottom: '16px',
-            }}
-          >
-            Student couriers deliver directly to your dorm room, lecture hall, or campus library in under 20 minutes!
+          <p className="promo-banner-desc">
+            Student couriers deliver steaming Kulhad Chai, Double Masala Maggi, Kathi Rolls & Biryani directly to your hostel room, library desk, or LHC in under 15 minutes!
           </p>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-            <div
-              style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                backdropFilter: 'blur(8px)',
-                border: '1px dashed #FF7A45',
-                padding: '6px 14px',
-                borderRadius: '8px',
-                fontWeight: 800,
-                fontSize: '13px',
-                color: '#FF9E2C',
-                letterSpacing: '0.04em',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-              }}
-            >
+            <div className="promo-coupon-badge">
               <Tag size={13} /> USE CODE: CAMPUSBITE
             </div>
 
-            <span style={{ fontSize: '13px', color: '#CBD5E1', fontWeight: 600 }}>
-              ⚡ Flat 20% OFF + Free Delivery
+            <span className="promo-offer-text">
+              ⚡ Flat 20% OFF + Free Hostel Delivery
             </span>
           </div>
         </div>
 
         {/* Decorative Graphic Element (Hidden on small screens) */}
-        <div
-          style={{
-            fontSize: '84px',
-            lineHeight: 1,
-            userSelect: 'none',
-            filter: 'drop-shadow(0 12px 24px rgba(0,0,0,0.4))',
-            display: 'none',
-          }}
-          className="promo-graphic-badge"
-        >
-          🍔
+        <div className="promo-graphic-badge">
+          ☕
         </div>
       </div>
 
@@ -230,7 +181,7 @@ const Restaurants = () => {
             />
             <input
               type="text"
-              placeholder="Search dishes, canteens, cuisines (e.g. Pizza, Spice, Paneer)..."
+              placeholder="Search dishes, canteens (e.g. Masala Dosa, Chai, Maggi, Paneer, Biryani)..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               style={{
@@ -282,7 +233,7 @@ const Restaurants = () => {
               onClick={() => setFilterFastDelivery(!filterFastDelivery)}
             >
               <Clock size={12} />
-              <span>Fast Delivery (&lt;20m)</span>
+              <span>Fast Delivery (&lt;15m)</span>
             </button>
 
             {hasActiveFilters && (
@@ -302,7 +253,13 @@ const Restaurants = () => {
       {/* 4. Section Title & Results Count */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)' }}>
         <h2 style={{ fontSize: '20px', fontWeight: 800 }}>
-          {debouncedSearch ? `Search results for "${debouncedSearch}"` : 'Top Campus Canteens & Eateries'}
+          {debouncedSearch
+            ? activeCategory !== 'all'
+              ? `Search results for "${debouncedSearch}" in ${activeCategoryObj.label}`
+              : `Search results for "${debouncedSearch}"`
+            : activeCategory !== 'all'
+            ? `${activeCategoryObj.label} Canteens & Stalls`
+            : 'Top Campus Canteens, Cafeterias & Tapris'}
         </h2>
         <span style={{ fontSize: '13px', color: 'var(--color-text-secondary)', fontWeight: 600 }}>
           {displayedRestaurants.length} {displayedRestaurants.length === 1 ? 'place' : 'places'} available

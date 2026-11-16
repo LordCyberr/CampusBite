@@ -3,8 +3,11 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, MapPin, Clock, Star, Tag, Heart } from 'lucide-react';
 
 const RESTAURANT_IMAGES = {
-  pizza: 'https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?w=600&auto=format&fit=crop&q=80',
-  curry: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&auto=format&fit=crop&q=80',
+  pizza: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&auto=format&fit=crop&q=80',
+  curry: 'https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=600&auto=format&fit=crop&q=80',
+  chai: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=600&auto=format&fit=crop&q=80',
+  dosa: 'https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=600&auto=format&fit=crop&q=80',
+  roll: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=600&auto=format&fit=crop&q=80',
   burger: 'https://images.unsplash.com/photo-1550547660-d9450f859349?w=600&auto=format&fit=crop&q=80',
   cafe: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=600&auto=format&fit=crop&q=80',
   default: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&auto=format&fit=crop&q=80',
@@ -24,25 +27,40 @@ const RestaurantCard = ({ restaurant }) => {
 
   // Determine cuisine and banner image based on restaurant name
   const nameLower = (restaurant.name || '').toLowerCase();
+  const isChai = /chai|tapri|nescafe|maggi|tea|samosa/i.test(nameLower);
+  const isSouth = /anna|dosa|idli|south|udupi|tiffin|sambhar/i.test(nameLower);
+  const isRoll = /roll|kathi|shawarma|frankie|street/i.test(nameLower);
+  const isCurry = /spice|junction|curry|dhaba|thali|biryani|punjab|masala/i.test(nameLower);
   const isPizza = /pizza|italian|slice/i.test(nameLower);
-  const isCurry = /spice|junction|curry|indian|dhaba|masala/i.test(nameLower);
   const isBurger = /burger|grill|bbq|wrap|crispy/i.test(nameLower);
-  const isCafe = /cafe|coffee|bake|sweet|dessert|tea/i.test(nameLower);
+  const isCafe = /cafe|coffee|bake|sweet|dessert|mithas/i.test(nameLower);
 
-  const cuisineTags = isPizza
-    ? 'Italian • Gourmet Pizzas • Fast Bites'
+  const cuisineTags = isChai
+    ? 'Chai Tapri • Maggi • Samosas & Snacks'
+    : isSouth
+    ? 'South Indian • Ghee Dosa • Idli Vada & Filter Coffee'
+    : isRoll
+    ? 'Kathi Rolls • Shawarma • Frankie & Street Bites'
     : isCurry
-    ? 'North Indian • Rice Bowls • Curries'
+    ? 'North Indian • Student Thalis • Biryanis & Curries'
+    : isPizza
+    ? 'Desi Fusion Pizzas • Garlic Breads • Shakes'
     : isBurger
-    ? 'American • Smash Burgers • Fries'
+    ? 'Desi Smash Burgers • Loaded Peri Fries'
     : isCafe
-    ? 'Cafe • Artisan Brews • Bakery'
-    : 'Campus Eats • Student Specials';
+    ? 'Campus Cafe • Artisan Brews • Bakery'
+    : 'Campus Canteen • Student Specials';
 
-  const bannerImg = isPizza
-    ? RESTAURANT_IMAGES.pizza
+  const bannerImg = isChai
+    ? RESTAURANT_IMAGES.chai
+    : isSouth
+    ? RESTAURANT_IMAGES.dosa
+    : isRoll
+    ? RESTAURANT_IMAGES.roll
     : isCurry
     ? RESTAURANT_IMAGES.curry
+    : isPizza
+    ? RESTAURANT_IMAGES.pizza
     : isBurger
     ? RESTAURANT_IMAGES.burger
     : isCafe
@@ -50,8 +68,18 @@ const RestaurantCard = ({ restaurant }) => {
     : RESTAURANT_IMAGES.default;
 
   const rating = restaurant.average_rating ? Number(restaurant.average_rating).toFixed(1) : '4.8';
-  const deliveryTime = isPizza ? '15-20 min' : '20-25 min';
-  const campusBuilding = isPizza ? 'North Campus • Block A' : isCurry ? 'Food Court • Central Hall' : 'Student Union • Level 1';
+  const deliveryTime = isChai ? '10-15 min' : isRoll ? '12-18 min' : isSouth ? '15-20 min' : isCurry ? '15-20 min' : '20-25 min';
+  const campusBuilding = isChai
+    ? 'Library Lawn • Near Gate 2'
+    : isSouth
+    ? 'Mess Complex • Block A'
+    : isRoll
+    ? 'Hostel 4 Night Canteen'
+    : isCurry
+    ? 'Central Food Court • Level 1'
+    : isPizza
+    ? 'Student Activity Centre (SAC)'
+    : 'Central Campus • Food Street';
 
   return (
     <div

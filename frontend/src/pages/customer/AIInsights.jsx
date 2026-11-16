@@ -1,18 +1,155 @@
 import React, { useState } from 'react';
 import {
   Sparkles,
-  Send,
   Bot,
   Clock,
   TrendingUp,
   Utensils,
   HelpCircle,
   AlertCircle,
-  CheckCircle2,
   RefreshCw,
-  MessageSquare,
+  Copy,
+  Check,
 } from 'lucide-react';
 import { fetchAIInsights } from '../../api/ai';
+
+// Parses inline markdown: **bold**, currency chips (₹ and $), and plain text
+const parseInlineMarkdown = (content) => {
+  if (!content) return null;
+
+  // Split by bold patterns **...**
+  const boldParts = content.split(/(\*\*[^*]+\*\*)/g);
+
+  return boldParts.map((part, idx) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      const boldText = part.slice(2, -2);
+      return (
+        <strong key={idx} style={{ color: 'var(--color-text-primary)', fontWeight: 700 }}>
+          {boldText}
+        </strong>
+      );
+    }
+
+    // Split out currency patterns e.g. ₹3,754.16 ($44.96) or ₹3,754.16 or $44.96
+    const currencyRegex = /(₹[\d,]+(?:\.\d+)?(?:\s*\(\$[\d,]+(?:\.\d+)?\))?|\$[\d,]+(?:\.\d+)?)/g;
+    const subParts = part.split(currencyRegex);
+
+    return (
+      <React.Fragment key={idx}>
+        {subParts.map((sub, sIdx) => {
+          if (/^₹[\d,]+|^[\$][\d,]+/.test(sub.trim())) {
+            return (
+              <span
+                key={sIdx}
+                style={{
+                  display: 'inline-block',
+                  backgroundColor: 'rgba(255, 79, 24, 0.1)',
+                  color: 'var(--color-primary)',
+                  fontWeight: 800,
+                  fontSize: '0.95em',
+                  padding: '2px 8px',
+                  borderRadius: '6px',
+                  margin: '0 2px',
+                  letterSpacing: '0.02em',
+                }}
+              >
+                {sub}
+              </span>
+            );
+          }
+          return sub;
+        })}
+      </React.Fragment>
+    );
+  });
+};
+
+const FormattedAnswer = ({ text }) => {
+  if (!text) return null;
+
+  const lines = text.split('\n').filter((l) => l.trim().length > 0);
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+      {lines.map((line, index) => {
+        const trimmed = line.trim();
+
+        // 1. Bullet list item: starts with "* ", "- ", "• "
+        const isBullet = /^[*•-]\s+/.test(trimmed);
+        if (isBullet) {
+          const itemText = trimmed.replace(/^[*•-]\s+/, '');
+          return (
+            <div
+              key={index}
+              style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '10px',
+                padding: '10px 14px',
+                backgroundColor: 'var(--color-bg-page)',
+                borderRadius: '8px',
+                border: '1px solid var(--color-border)',
+                fontSize: '14px',
+                lineHeight: 1.55,
+              }}
+            >
+              <div
+                style={{
+                  width: '6px',
+                  height: '6px',
+                  borderRadius: '50%',
+                  backgroundColor: 'var(--color-primary)',
+                  marginTop: '8px',
+                  flexShrink: 0,
+                }}
+              />
+              <div style={{ flex: 1, color: 'var(--color-text-secondary)' }}>
+                {parseInlineMarkdown(itemText)}
+              </div>
+            </div>
+          );
+        }
+
+        // 2. Callout / Tip block: starts with "Tip:", "Note:", "💡"
+        const isCallout = /^(tip:|note:|💡)/i.test(trimmed);
+        if (isCallout) {
+          return (
+            <div
+              key={index}
+              style={{
+                padding: '12px 16px',
+                backgroundColor: 'var(--color-primary-tint)',
+                border: '1px solid var(--color-primary-subtle)',
+                borderRadius: '10px',
+                fontSize: '14px',
+                lineHeight: 1.55,
+                color: 'var(--color-text-primary)',
+                marginTop: '4px',
+              }}
+            >
+              {parseInlineMarkdown(trimmed)}
+            </div>
+          );
+        }
+
+        // 3. Regular paragraph
+        return (
+          <p
+            key={index}
+            style={{
+              fontSize: '15px',
+              lineHeight: 1.65,
+              color: 'var(--color-text-primary)',
+              margin: 0,
+            }}
+          >
+            {parseInlineMarkdown(trimmed)}
+          </p>
+        );
+      })}
+    </div>
+  );
+};
 
 const SAMPLE_QUESTIONS = [
   {
@@ -40,6 +177,14 @@ const AIInsights = () => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    if (!result?.answer) return;
+    navigator.clipboard.writeText(result.answer);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const handleSampleClick = (sampleText) => {
     setQuestion(sampleText);
@@ -255,13 +400,16 @@ const AIInsights = () => {
         </div>
       )}
 
-      {/* Result Display (Strictly plain text rendering to prevent XSS) */}
+      {/* Result Display with Clean Typography & Stat Highlighting */}
       {result && (
         <div
           className="card"
           style={{
             borderLeft: '4px solid var(--color-primary)',
             backgroundColor: 'var(--color-bg-surface)',
+            borderRadius: '16px',
+            padding: '24px',
+            boxShadow: 'var(--shadow-md)',
           }}
         >
           <div
@@ -270,41 +418,129 @@ const AIInsights = () => {
               justifyContent: 'space-between',
               alignItems: 'center',
               flexWrap: 'wrap',
-              gap: 'var(--space-2)',
-              marginBottom: 'var(--space-3)',
+              gap: '12px',
+              marginBottom: '18px',
               borderBottom: '1px solid var(--color-border-subtle)',
-              paddingBottom: 'var(--space-2)',
+              paddingBottom: '14px',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-              <Bot size={20} color="var(--color-primary)" />
-              <h3 style={{ fontSize: 'var(--font-size-md)', margin: 0 }}>CampusBite AI Answer</h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div
+                style={{
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '10px',
+                  backgroundColor: 'var(--color-primary-tint)',
+                  color: 'var(--color-primary)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Bot size={20} />
+              </div>
+              <div>
+                <h3 style={{ fontSize: '16px', fontWeight: 800, margin: 0, color: 'var(--color-text-primary)' }}>
+                  CampusBite AI Concierge
+                </h3>
+                <span style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>
+                  Personalized dining insights from your order history
+                </span>
+              </div>
             </div>
 
-            <span
-              style={{
-                fontSize: 'var(--font-size-xs)',
-                backgroundColor: 'rgba(235, 94, 40, 0.1)',
-                color: 'var(--color-primary)',
-                padding: '2px 8px',
-                borderRadius: 'var(--radius-full)',
-                fontWeight: 600,
-              }}
-            >
-              Based on {result.orders_considered} {result.orders_considered === 1 ? 'order' : 'orders'} analyzed
-            </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span
+                style={{
+                  fontSize: '12px',
+                  backgroundColor: 'var(--color-primary-tint)',
+                  color: 'var(--color-primary)',
+                  padding: '3px 10px',
+                  borderRadius: 'var(--radius-full)',
+                  fontWeight: 700,
+                }}
+              >
+                {result.orders_considered} {result.orders_considered === 1 ? 'order' : 'orders'} analyzed
+              </span>
+
+              <button
+                type="button"
+                onClick={handleCopy}
+                title="Copy answer to clipboard"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  padding: '5px 12px',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  backgroundColor: 'var(--color-bg-page)',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: '6px',
+                  color: copied ? 'var(--color-success)' : 'var(--color-text-secondary)',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                {copied ? <Check size={13} color="var(--color-success)" /> : <Copy size={13} />}
+                <span>{copied ? 'Copied' : 'Copy'}</span>
+              </button>
+            </div>
           </div>
 
-          {/* Plain text display */}
+          {/* Formatted Rich Markdown Content */}
+          <FormattedAnswer text={result.answer} />
+
+          {/* Suggested Quick Follow-Up Questions */}
           <div
             style={{
-              fontSize: 'var(--font-size-base)',
-              lineHeight: 1.6,
-              color: 'var(--color-text-primary)',
-              whiteSpace: 'pre-wrap',
+              marginTop: '20px',
+              paddingTop: '14px',
+              borderTop: '1px solid var(--color-border-subtle)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              flexWrap: 'wrap',
             }}
           >
-            {result.answer}
+            <span style={{ fontSize: '12px', color: 'var(--color-text-muted)', fontWeight: 600 }}>
+              Ask follow-up:
+            </span>
+            {[
+              'What are my favorite dishes?',
+              'How much have I spent so far?',
+              'Suggest my next meal',
+            ].map((fu, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => {
+                  setQuestion(fu);
+                  window.scrollTo({ top: 320, behavior: 'smooth' });
+                }}
+                style={{
+                  fontSize: '12px',
+                  padding: '4px 12px',
+                  borderRadius: 'var(--radius-full)',
+                  backgroundColor: 'var(--color-bg-page)',
+                  border: '1px solid var(--color-border)',
+                  color: 'var(--color-text-secondary)',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                  whiteSpace: 'normal',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--color-primary)';
+                  e.currentTarget.style.color = 'var(--color-primary)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--color-border)';
+                  e.currentTarget.style.color = 'var(--color-text-secondary)';
+                }}
+              >
+                {fu}
+              </button>
+            ))}
           </div>
         </div>
       )}

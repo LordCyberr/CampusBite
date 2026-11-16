@@ -4,22 +4,22 @@ const CurrencyContext = createContext(null);
 
 export const USD_TO_INR_RATE = 83.5;
 
-export const formatPriceWithMode = (usdAmount, mode = 'both') => {
+export const formatPriceWithMode = (usdAmount, mode = 'inr') => {
   const num = Number(usdAmount) || 0;
   const usdStr = `$${num.toFixed(2)}`;
   const inrVal = Math.round(num * USD_TO_INR_RATE);
   const inrStr = `₹${inrVal.toLocaleString('en-IN')}`;
 
-  if (mode === 'usd') return usdStr;
   if (mode === 'inr') return inrStr;
-  // Default 'both' (Dual currency display)
-  return `${usdStr} (${inrStr})`;
+  if (mode === 'usd') return usdStr;
+  // Dual mode: Indian Rupees FIRST, then USD in parentheses
+  return `${inrStr} (${usdStr})`;
 };
 
 export const CurrencyProvider = ({ children }) => {
-  // Mode can be 'both', 'usd', or 'inr'
+  // Mode can be 'inr', 'both', or 'usd' (defaults to 'inr' for authentic Indian campus experience)
   const [currencyMode, setCurrencyMode] = useState(() => {
-    return localStorage.getItem('campusbite_currency_mode') || 'both';
+    return localStorage.getItem('campusbite_currency_mode') || 'inr';
   });
 
   useEffect(() => {

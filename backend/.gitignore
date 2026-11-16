@@ -1,0 +1,14 @@
+# Defense-in-depth: Never commit sensitive environment or secret keys
+.env
+.env.*
+*.env
+!.env.example
+
+# Local SQLite databases
+*.db
+*.db-journal
+campusbite.db
+
+# Python cache
+__pycache__/
+*.py[cod]

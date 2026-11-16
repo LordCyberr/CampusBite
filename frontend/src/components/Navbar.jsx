@@ -9,7 +9,6 @@ import {
   UserPlus,
   Menu,
   X,
-  User,
   Sparkles,
   LayoutDashboard,
   ClipboardList,
@@ -152,7 +151,7 @@ const Navbar = () => {
             {/* Campus Location Pill (Interactive Zomato/Swiggy Location Selector) */}
             <div
               className="campus-location-selector"
-              title="Campus Delivery Zone: Central Campus"
+              title="Campus Delivery Zone: Central Food Court & Lecture Hall Complex"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -173,7 +172,7 @@ const Navbar = () => {
             >
               <MapPin size={13} color="var(--color-primary)" style={{ flexShrink: 0 }} />
               <span style={{ fontWeight: 600, color: 'var(--color-text-primary)', whiteSpace: 'nowrap' }}>
-                Central Campus
+                Central Food Court • LHC
               </span>
               <ChevronDown size={12} color="var(--color-text-muted)" style={{ flexShrink: 0 }} />
             </div>

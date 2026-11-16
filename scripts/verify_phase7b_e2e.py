@@ -2,7 +2,7 @@
 Phase 7B End-to-End Walkthrough and Automated Verification Script.
 Executes all 11 scenarios defined in Phase 7B Master Prompt.
 """
-import sys
+import os
 import requests
 
 BASE_URL = "http://127.0.0.1:8000"
@@ -15,8 +15,9 @@ def run_tests():
     session = requests.Session()
 
     # Helper: login
-    def login(email, password="password123"):
-        res = session.post(f"{BASE_URL}/auth/login", json={"email": email, "password": password})
+    def login(email, password=None):
+        pwd = password or os.getenv("DEMO_PASSWORD", "demo_account_pass_123")
+        res = session.post(f"{BASE_URL}/auth/login", json={"email": email, "password": pwd})
         assert res.status_code == 200, f"Login failed for {email}: {res.text}"
         token = res.json()["access_token"]
         return {"Authorization": f"Bearer {token}"}

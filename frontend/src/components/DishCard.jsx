@@ -4,9 +4,17 @@ import { useCart } from '../context/CartContext';
 import { useCurrency } from '../context/CurrencyContext';
 
 const DISH_THUMBNAILS = {
+  chai: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=300&auto=format&fit=crop&q=80',
+  maggi: 'https://images.unsplash.com/photo-1612927601601-6638404737ce?w=300&auto=format&fit=crop&q=80',
+  dosa: 'https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=300&auto=format&fit=crop&q=80',
+  biryani: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=300&auto=format&fit=crop&q=80',
+  samosa: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=300&auto=format&fit=crop&q=80',
+  roll: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=300&auto=format&fit=crop&q=80',
+  thali: 'https://images.unsplash.com/photo-1610057099443-fde8c4d50f91?w=300&auto=format&fit=crop&q=80',
+  lassi: 'https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=300&auto=format&fit=crop&q=80',
+  gulabjamun: 'https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?w=300&auto=format&fit=crop&q=80',
   pizza: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=300&auto=format&fit=crop&q=80',
   burger: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&auto=format&fit=crop&q=80',
-  curry: 'https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=300&auto=format&fit=crop&q=80',
   sandwich: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=300&auto=format&fit=crop&q=80',
   fries: 'https://images.unsplash.com/photo-1576107232684-1279f3908594?w=300&auto=format&fit=crop&q=80',
   drink: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=300&auto=format&fit=crop&q=80',
@@ -32,21 +40,28 @@ const DishCard = ({ dish, restaurantId, restaurantName }) => {
   );
 
   // Bestseller highlight
-  const isBestseller = /special|signature|bestseller|supreme|chef|deluxe|paneer|butter|burger/i.test(
+  const isBestseller = /special|signature|bestseller|supreme|chef|deluxe|paneer|butter|maggi|biryani|dosa|thali/i.test(
     textCombined
   );
 
   // Select matching image thumbnail
   const getDishImage = () => {
+    if (/chai|tea|kadak/i.test(textCombined)) return DISH_THUMBNAILS.chai;
+    if (/maggi|noodle/i.test(textCombined)) return DISH_THUMBNAILS.maggi;
+    if (/dosa|idli|vada|uttapam/i.test(textCombined)) return DISH_THUMBNAILS.dosa;
+    if (/biryani|pulao/i.test(textCombined)) return DISH_THUMBNAILS.biryani;
+    if (/samosa|pakora|kachori/i.test(textCombined)) return DISH_THUMBNAILS.samosa;
+    if (/roll|kathi|frankie|wrap/i.test(textCombined)) return DISH_THUMBNAILS.roll;
+    if (/thali|chole|rajma/i.test(textCombined)) return DISH_THUMBNAILS.thali;
+    if (/lassi|shake|smoothie/i.test(textCombined)) return DISH_THUMBNAILS.lassi;
+    if (/gulab|jamun|sweet|mithai|halwa|kulfi/i.test(textCombined)) return DISH_THUMBNAILS.gulabjamun;
     if (/pizza|margherita|pepperoni/i.test(textCombined)) return DISH_THUMBNAILS.pizza;
     if (/burger|patty|whopper|slider/i.test(textCombined)) return DISH_THUMBNAILS.burger;
-    if (/curry|biryani|dal|paneer|masala|rice|roti/i.test(textCombined)) return DISH_THUMBNAILS.curry;
-    if (/sandwich|toast|wrap|roll|sub/i.test(textCombined)) return DISH_THUMBNAILS.sandwich;
+    if (/curry|dal|paneer|masala|rice|roti|naan/i.test(textCombined)) return DISH_THUMBNAILS.curry;
+    if (/sandwich|toast|bun\s*maska/i.test(textCombined)) return DISH_THUMBNAILS.sandwich;
     if (/fries|finger|nugget|snack|chips|crispy/i.test(textCombined)) return DISH_THUMBNAILS.fries;
-    if (/drink|shake|juice|soda|coffee|tea|beverage|cola/i.test(textCombined)) return DISH_THUMBNAILS.drink;
-    if (/pasta|noodle|spaghetti|macaroni/i.test(textCombined)) return DISH_THUMBNAILS.pasta;
-    if (/dessert|cake|brownie|ice\s*cream|pastry|pie/i.test(textCombined)) return DISH_THUMBNAILS.dessert;
-    if (/salad|greens|bowl|healthy/i.test(textCombined)) return DISH_THUMBNAILS.salad;
+    if (/drink|coffee|beverage|soda/i.test(textCombined)) return DISH_THUMBNAILS.drink;
+    if (/dessert|cake|brownie|ice\s*cream|pastry/i.test(textCombined)) return DISH_THUMBNAILS.dessert;
     return DISH_THUMBNAILS.default;
   };
 

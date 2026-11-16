@@ -16,7 +16,7 @@ router = APIRouter(prefix="/restaurants", tags=["Restaurants"])
 
 @router.get("", response_model=PaginatedResponse[RestaurantResponse])
 def list_restaurants(
-    q: Optional[str] = Query(None, description="Search restaurant by name"),
+    q: Optional[str] = Query(None, description="Search restaurant by name, description, or dishes"),
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(10, ge=1, le=100, description="Items per page"),
     current_user: User = Depends(get_current_user),
@@ -24,8 +24,21 @@ def list_restaurants(
 ):
     """List restaurants with optional name search and pagination. Accessible to all authenticated users."""
     query = db.query(Restaurant)
-    if q:
-        query = query.filter(Restaurant.name.ilike(f"%{q}%"))
+    if q and q.strip():
+        term = f"%{q.strip()}%"
+        from sqlalchemy import or_
+        from ..models import MenuItem
+        matching_dish_restaurant_ids = (
+            db.query(MenuItem.restaurant_id)
+            .filter(or_(MenuItem.name.ilike(term), MenuItem.description.ilike(term)))
+        )
+        query = query.filter(
+            or_(
+                Restaurant.name.ilike(term),
+                Restaurant.description.ilike(term),
+                Restaurant.id.in_(matching_dish_restaurant_ids),
+            )
+        )
 
     total_count = query.count()
     items = query.offset((page - 1) * page_size).limit(page_size).all()

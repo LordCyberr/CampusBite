@@ -48,10 +48,12 @@ async def lifespan(app: FastAPI):
                 try:
                     from seed import seed_database
                     seed_database()
-                except Exception:
-                    pass
-    except Exception:
-        pass
+                except Exception as seed_err:
+                    import logging
+                    logging.getLogger("campusbite").warning(f"Initial auto-seed skipped: {seed_err}")
+    except Exception as db_err:
+        import logging
+        logging.getLogger("campusbite").warning(f"Database check on startup skipped: {db_err}")
 
     # Start reminder background task if enabled in environment
     reminders_enabled = os.getenv("REMINDERS_ENABLED", "true").lower() in ("true", "1", "yes")

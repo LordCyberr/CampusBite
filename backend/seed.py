@@ -36,6 +36,24 @@ SEED_USERS = [
         "role": UserRole.RESTAURANT_OWNER.value,
     },
     {
+        "name": "Ramesh Kaka (Chai Tapri)",
+        "email": "owner_chai@campusbite.com",
+        "password": "password123",
+        "role": UserRole.RESTAURANT_OWNER.value,
+    },
+    {
+        "name": "Anna Murugan (South Tiffins)",
+        "email": "owner_anna@campusbite.com",
+        "password": "password123",
+        "role": UserRole.RESTAURANT_OWNER.value,
+    },
+    {
+        "name": "Biplab Da (Kathi Rolls)",
+        "email": "owner_rolls@campusbite.com",
+        "password": "password123",
+        "role": UserRole.RESTAURANT_OWNER.value,
+    },
+    {
         "name": "Alex Student",
         "email": "customer@campusbite.com",
         "password": "password123",
@@ -52,28 +70,68 @@ SEED_USERS = [
 SEED_RESTAURANTS = [
     {
         "owner_email": "owner1@campusbite.com",
-        "name": "Mario's Campus Pizzeria",
-        "description": "Artisan wood-fired pizzas, garlic breads, and Italian sodas.",
+        "name": "Mario's Desi Pizza & Cafe",
+        "description": "Desi-Italian fusion wood-fired pizzas, cheesy garlic breads, and cold brews.",
         "dishes": [
-            {"name": "Margherita Pizza", "description": "Classic tomato sauce, mozzarella, and fresh basil", "price": 9.99, "is_available": True},
-            {"name": "Pepperoni Feast", "description": "Spicy pepperoni with double mozzarella", "price": 12.49, "is_available": True},
-            {"name": "BBQ Chicken Pizza", "description": "Grilled chicken breast, red onions, smoky BBQ sauce", "price": 13.99, "is_available": True},
-            {"name": "Garlic Breadsticks", "description": "Warm garlic butter breadsticks with marinara dip", "price": 5.49, "is_available": True},
-            {"name": "Truffle Mushroom Pizza", "description": "Wild portobello, white truffle oil, fontina", "price": 14.99, "is_available": False},
-            {"name": "San Pellegrino Limonata", "description": "Chilled sparkling Italian citrus soda", "price": 3.50, "is_available": True},
+            {"name": "Tandoori Paneer Makhani Pizza", "description": "Wood-fired crust with rich makhani gravy, paneer tikka, capsicum, red onions & mozzarella", "price": 11.99, "is_available": True},
+            {"name": "Chicken Tikka Feast Pizza", "description": "Tandoori chicken tikka, spiced paprika, jalapeños, onions and double mozzarella", "price": 12.49, "is_available": True},
+            {"name": "Classic Margherita Pizza", "description": "Fresh tomato herb sauce, melted mozzarella, and fresh basil leaves", "price": 9.99, "is_available": True},
+            {"name": "Cheesy Garlic Stuffed Bread", "description": "Warm garlic butter bread stuffed with gooey mozzarella and sweet corn", "price": 5.49, "is_available": True},
+            {"name": "Peri-Peri Paneer Pizza", "description": "Spicy peri-peri seasoned paneer chunks, bell peppers and molten cheese", "price": 13.99, "is_available": True},
+            {"name": "Chocolate Brownie with Hot Fudge", "description": "Warm fudgy walnut brownie served with hot chocolate syrup", "price": 4.50, "is_available": True},
         ],
     },
     {
         "owner_email": "owner2@campusbite.com",
-        "name": "Spice Junction Canteen",
-        "description": "Authentic campus curry bowls, rolls, and tandoori bites.",
+        "name": "Spice Junction • Desi Dhaba & Canteen",
+        "description": "Authentic North Indian student thalis, fragrant biryanis, parathas, and homestyle dal.",
         "dishes": [
-            {"name": "Butter Chicken Bowl", "description": "Tender chicken in creamy tomato butter sauce over basmati", "price": 10.99, "is_available": True},
-            {"name": "Paneer Tikka Roll", "description": "Char-grilled spiced paneer with mint chutney in paratha", "price": 7.99, "is_available": True},
-            {"name": "Crispy Samosa (2 pcs)", "description": "Golden spiced potato pastries with tamarind chutney", "price": 4.50, "is_available": True},
-            {"name": "Chicken Tikka Biryani", "description": "Fragrant long-grain rice layered with spiced chicken", "price": 12.99, "is_available": True},
-            {"name": "Mango Lassi", "description": "Chilled sweet mango and yogurt smoothie", "price": 4.00, "is_available": True},
-            {"name": "Gulab Jamun (2 pcs)", "description": "Warm milk dumplings in cardamom sugar syrup", "price": 3.99, "is_available": False},
+            {"name": "Student Special Desi Thali", "description": "Dal Tadka, Paneer Butter Masala, 2 Butter Rotis, Steamed Jeera Rice & Gulab Jamun", "price": 7.99, "is_available": True},
+            {"name": "Chicken Tikka Biryani", "description": "Aromatic long-grain basmati layered with tender spiced chicken & boondi raita", "price": 8.99, "is_available": True},
+            {"name": "Butter Chicken & Naan Combo", "description": "Creamy rich butter chicken served with 2 hot butter naans", "price": 9.49, "is_available": True},
+            {"name": "Paneer Butter Masala Bowl", "description": "Soft cottage cheese in rich tomato-cashew gravy with jeera rice", "price": 7.49, "is_available": True},
+            {"name": "Rajma Chawal Desi Bowl", "description": "Slow-cooked spiced Punjabi rajma served over piping hot basmati rice", "price": 5.49, "is_available": True},
+            {"name": "Chole Bhature Combo (2 pcs)", "description": "Fluffy golden bhaturas with spicy Amritsari chole, pickled onions & green chilli", "price": 5.99, "is_available": True},
+            {"name": "Patiala Sweet Lassi", "description": "Thick churned sweet yogurt topped with malai and saffron cardamom", "price": 2.99, "is_available": True},
+            {"name": "Garam Gulab Jamun (2 pcs)", "description": "Soft fried milk dumplings soaked in warm rose-cardamom sugar syrup", "price": 2.49, "is_available": True},
+        ],
+    },
+    {
+        "owner_email": "owner_chai@campusbite.com",
+        "name": "Chai Tapri & Nescafe Corner",
+        "description": "Campus landmark for midnight study breaks, kadak tapri chai, steaming Maggi, and bun maska.",
+        "dishes": [
+            {"name": "Kadak Masala Kulhad Chai", "description": "Slow-brewed strong tea infused with crushed ginger, cardamom and cloves in earthen kulhad", "price": 0.99, "is_available": True},
+            {"name": "Double Masala Cheese Maggi", "description": "Late-night classic Maggi noodles with double tastemaker, sweet corn and grated Amul cheese", "price": 2.49, "is_available": True},
+            {"name": "Butter Egg Maggi", "description": "Spicy Maggi noodles tossed with scrambled egg and a dollop of melted butter", "price": 2.29, "is_available": True},
+            {"name": "Classic Bun Maska", "description": "Warm toasted sweet bakery bun generously slathered with salted Amul butter", "price": 1.49, "is_available": True},
+            {"name": "Crispy Aloo Samosa (2 pcs)", "description": "Piping hot golden potato-pea pastries served with tangy tamarind & mint chutney", "price": 1.29, "is_available": True},
+            {"name": "Paneer Bread Pakora", "description": "Spiced potato and paneer slab stuffed in bread, gram-flour battered and deep fried", "price": 1.89, "is_available": True},
+            {"name": "Iced Nescafe Cold Coffee", "description": "Thick blended creamy cold coffee with chocolate syrup and vanilla scoop", "price": 2.49, "is_available": True},
+        ],
+    },
+    {
+        "owner_email": "owner_anna@campusbite.com",
+        "name": "Anna's South Indian Tiffin Center",
+        "description": "Crispy ghee roast dosas, steaming hot idlis, medu vadas, and authentic degree filter coffee.",
+        "dishes": [
+            {"name": "Crispy Ghee Masala Dosa", "description": "Golden thin crepe roasted with pure desi ghee, stuffed with aloo masala, 3 chutneys & piping sambar", "price": 3.99, "is_available": True},
+            {"name": "Steamed Idli-Vada Combo", "description": "2 soft steamed rice cakes + 1 crispy medu vada with fresh coconut chutney and hot sambar", "price": 2.99, "is_available": True},
+            {"name": "Mysore Masala Dosa", "description": "Crisp dosa smeared with spicy red garlic-chilli chutney and mashed potato bhaji", "price": 4.49, "is_available": True},
+            {"name": "Onion Rava Masala Dosa", "description": "Lacy semolina crepe with chopped green chillies, onions, coriander and cumin", "price": 4.29, "is_available": True},
+            {"name": "Madras Degree Filter Coffee", "description": "Freshly brewed chicory coffee frothed with boiling whole milk in traditional brass davarah", "price": 1.49, "is_available": True},
+        ],
+    },
+    {
+        "owner_email": "owner_rolls@campusbite.com",
+        "name": "Kolkata Kathi Rolls & Street Bites",
+        "description": "Legendary flaky paratha rolls stuffed with tandoori tikka, crunchy onions, and lemon chaat masala.",
+        "dishes": [
+            {"name": "Paneer Tikka Kathi Roll", "description": "Char-grilled marinated paneer cubes wrapped in layered flaky paratha with mint chutney and onions", "price": 3.99, "is_available": True},
+            {"name": "Double Egg Chicken Roll", "description": "Pan-fried paratha layered with 2 beaten eggs, stuffed with juicy spiced chicken bhuna", "price": 4.79, "is_available": True},
+            {"name": "Aloo Tikki Desi Burger", "description": "Crispy spiced potato patty burger with tandoori mayo, onion rings and mint spread", "price": 2.49, "is_available": True},
+            {"name": "Peri-Peri Masala Fries", "description": "Crispy golden potato fries generously tossed in spicy Indian peri-peri seasoning", "price": 2.29, "is_available": True},
+            {"name": "Masala Lemon Chaat Soda", "description": "Fizzy chilled soda with fresh lemon juice, roasted cumin, black salt and mint", "price": 1.49, "is_available": True},
         ],
     },
 ]
@@ -117,9 +175,15 @@ def seed_database():
                 db.add(restaurant)
                 db.commit()
                 db.refresh(restaurant)
+            else:
+                restaurant.name = r_data["name"]
+                restaurant.description = r_data["description"]
+                db.commit()
+                db.refresh(restaurant)
             rest_map[r_data["name"]] = restaurant
+            rest_map[owner.email] = restaurant
 
-            # Seed Menu Items for this restaurant
+            # Seed / update Menu Items for this restaurant
             for d in r_data["dishes"]:
                 existing_dish = db.query(MenuItem).filter(
                     MenuItem.restaurant_id == restaurant.id,
@@ -134,17 +198,21 @@ def seed_database():
                         is_available=d["is_available"],
                     )
                     db.add(dish)
+                else:
+                    existing_dish.description = d["description"]
+                    existing_dish.price = d["price"]
+                    existing_dish.is_available = d["is_available"]
             db.commit()
 
         # 3. Seed Sample Orders for Dashboard Demonstration
         alex = user_map.get("customer@campusbite.com")
         sam = user_map.get("delivery@campusbite.com")
-        mario_rest = rest_map.get("Mario's Campus Pizzeria")
+        mario_rest = rest_map.get("Mario's Desi Pizza & Cafe") or rest_map.get("owner1@campusbite.com")
 
         if alex and sam and mario_rest:
             dishes = db.query(MenuItem).filter(MenuItem.restaurant_id == mario_rest.id).all()
             dish_margherita = next((d for d in dishes if "Margherita" in d.name), dishes[0])
-            dish_pepperoni = next((d for d in dishes if "Pepperoni" in d.name), dishes[1])
+            dish_pepperoni = next((d for d in dishes if "Tikka" in d.name or ("Pizza" in d.name and d.id != dish_margherita.id)), dishes[1] if len(dishes) > 1 else dish_margherita)
 
             # Sample Order 1: DELIVERED with an existing 5-star Review
             order1 = db.query(Order).filter(Order.delivery_address == "Dorm Hall A, Room 101").first()
