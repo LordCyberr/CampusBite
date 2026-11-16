@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   ShoppingBag,
@@ -10,6 +10,7 @@ import {
   ShieldCheck,
   Tag,
   Sparkles,
+  X,
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useCurrency } from '../context/CurrencyContext';
@@ -43,13 +44,38 @@ const Cart = () => {
     items,
     totalCount,
     totalAmount,
+    appliedCoupon,
+    discountAmount,
+    finalAmount,
+    applyCoupon,
+    removeCoupon,
     updateQuantity,
     removeItem,
     clearCart,
   } = useCart();
   const { formatPrice } = useCurrency();
 
+  const [couponInput, setCouponInput] = useState('');
+  const [couponFeedback, setCouponFeedback] = useState(null);
+
   const navigate = useNavigate();
+
+  const handleApplyCoupon = (codeToApply) => {
+    const code = codeToApply || couponInput;
+    const result = applyCoupon(code);
+    if (result.success) {
+      setCouponFeedback({ type: 'success', text: result.message });
+      setCouponInput('');
+    } else {
+      setCouponFeedback({ type: 'error', text: result.message });
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    removeCoupon();
+    setCouponFeedback({ type: 'info', text: 'Coupon removed successfully.' });
+    setTimeout(() => setCouponFeedback(null), 3000);
+  };
 
   if (items.length === 0) {
     return (
@@ -245,24 +271,230 @@ const Cart = () => {
         </div>
       </div>
 
-      {/* Uber Eats "Saving with promotions" tag */}
-      <div
-        style={{
-          backgroundColor: '#FFF2ED',
-          border: '1px solid #FFD4C4',
-          borderRadius: '10px',
-          padding: '10px 16px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          color: '#FF4F18',
-          fontWeight: 700,
-          fontSize: '13px',
-          marginBottom: 'var(--space-6)',
-        }}
-      >
-        <Tag size={16} />
-        <span>Saving with Campus Student Promotions: 100% Free Courier Delivery Applied</span>
+      {/* Interactive Coupons & Student Discounts Section */}
+      <div className="card" style={{ marginBottom: 'var(--space-6)', padding: '20px', borderRadius: '14px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Tag size={18} color="var(--color-primary)" />
+            <h3 style={{ fontSize: '16px', fontWeight: 800 }}>Coupons & Student Offers</h3>
+          </div>
+          <span style={{ fontSize: '12px', color: 'var(--color-primary)', fontWeight: 700 }}>
+            ⚡ Instant Savings
+          </span>
+        </div>
+
+        {appliedCoupon ? (
+          /* Applied State with Clear "Remove Coupon" Button */
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '14px 18px',
+              backgroundColor: 'rgba(34, 197, 94, 0.08)',
+              border: '1.5px dashed #16A34A',
+              borderRadius: '12px',
+              flexWrap: 'wrap',
+              gap: '12px',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div
+                style={{
+                  width: '34px',
+                  height: '34px',
+                  borderRadius: '50%',
+                  backgroundColor: '#DCFCE7',
+                  color: '#16A34A',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 900,
+                  fontSize: '15px',
+                  flexShrink: 0,
+                }}
+              >
+                ✓
+              </div>
+              <div>
+                <div style={{ fontWeight: 800, fontSize: '14px', color: '#15803D' }}>
+                  Code &apos;{appliedCoupon.code}&apos; Applied!
+                </div>
+                <div style={{ fontSize: '12px', color: 'var(--color-text-secondary)', marginTop: '2px' }}>
+                  You save {formatPrice(discountAmount)} ({appliedCoupon.description})
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleRemoveCoupon}
+              className="btn-secondary btn-sm"
+              style={{
+                color: 'var(--color-error)',
+                borderColor: 'rgba(239, 68, 68, 0.35)',
+                backgroundColor: 'rgba(239, 68, 68, 0.06)',
+                padding: '6px 14px',
+                fontSize: '12px',
+                fontWeight: 800,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                borderRadius: '8px',
+              }}
+            >
+              <X size={14} /> Remove Coupon
+            </button>
+          </div>
+        ) : (
+          /* Input Box & Quick Tap Promo Chips */
+          <div>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleApplyCoupon();
+              }}
+              style={{ display: 'flex', gap: '10px', marginBottom: '14px' }}
+            >
+              <input
+                type="text"
+                placeholder="Enter Coupon Code (e.g. CAMPUSBITE)..."
+                value={couponInput}
+                onChange={(e) => {
+                  setCouponInput(e.target.value);
+                  if (couponFeedback) setCouponFeedback(null);
+                }}
+                style={{
+                  flex: 1,
+                  height: '42px',
+                  borderRadius: '10px',
+                  textTransform: 'uppercase',
+                  fontWeight: 700,
+                  fontSize: '13px',
+                }}
+                aria-label="Coupon Code Input"
+              />
+              <button
+                type="submit"
+                className="btn-primary"
+                style={{
+                  height: '42px',
+                  padding: '0 20px',
+                  borderRadius: '10px',
+                  fontWeight: 800,
+                  fontSize: '13px',
+                }}
+              >
+                Apply
+              </button>
+            </form>
+
+            {couponFeedback && (
+              <div
+                style={{
+                  padding: '8px 12px',
+                  borderRadius: '8px',
+                  marginBottom: '12px',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  backgroundColor:
+                    couponFeedback.type === 'error'
+                      ? 'var(--color-error-surface)'
+                      : 'rgba(34, 197, 94, 0.08)',
+                  color:
+                    couponFeedback.type === 'error'
+                      ? 'var(--color-error)'
+                      : '#15803D',
+                  border: `1px solid ${
+                    couponFeedback.type === 'error'
+                      ? 'var(--color-error-border)'
+                      : '#86EFAC'
+                  }`,
+                }}
+              >
+                {couponFeedback.text}
+              </div>
+            )}
+
+            <div>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--color-text-secondary)' }}>
+                Available Student Campus Offers (Tap to Apply):
+              </span>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '8px' }}>
+                <button
+                  type="button"
+                  onClick={() => handleApplyCoupon('CAMPUSBITE')}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '6px 12px',
+                    borderRadius: '8px',
+                    border: '1.5px dashed var(--color-primary)',
+                    backgroundColor: 'rgba(255, 79, 24, 0.06)',
+                    color: 'var(--color-primary)',
+                    fontSize: '12px',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                  }}
+                >
+                  <Tag size={12} />
+                  <span>CAMPUSBITE</span>
+                  <span style={{ fontWeight: 500, fontSize: '11px', color: 'var(--color-text-secondary)' }}>
+                    (20% OFF)
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleApplyCoupon('FIRSTBITE')}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '6px 12px',
+                    borderRadius: '8px',
+                    border: '1.5px dashed #8B5CF6',
+                    backgroundColor: 'rgba(139, 92, 246, 0.06)',
+                    color: '#8B5CF6',
+                    fontSize: '12px',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                  }}
+                >
+                  <Sparkles size={12} />
+                  <span>FIRSTBITE</span>
+                  <span style={{ fontWeight: 500, fontSize: '11px', color: 'var(--color-text-secondary)' }}>
+                    (25% OFF)
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleApplyCoupon('CHAI10')}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '6px 12px',
+                    borderRadius: '8px',
+                    border: '1.5px dashed #059669',
+                    backgroundColor: 'rgba(5, 150, 105, 0.06)',
+                    color: '#059669',
+                    fontSize: '12px',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                  }}
+                >
+                  <span>☕ CHAI10</span>
+                  <span style={{ fontWeight: 500, fontSize: '11px', color: 'var(--color-text-secondary)' }}>
+                    (₹20 OFF)
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Order Summary Card */}
@@ -280,7 +512,7 @@ const Cart = () => {
           </span>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
           <span style={{ color: 'var(--color-text-secondary)', fontSize: '14px' }}>
             Campus Courier Delivery
           </span>
@@ -288,6 +520,17 @@ const Cart = () => {
             FREE
           </span>
         </div>
+
+        {appliedCoupon && discountAmount > 0 && (
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+            <span style={{ color: '#16A34A', fontSize: '14px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Tag size={13} /> Coupon Discount ({appliedCoupon.code})
+            </span>
+            <span style={{ fontWeight: 800, color: '#16A34A', fontSize: '14px' }}>
+              -{formatPrice(discountAmount)}
+            </span>
+          </div>
+        )}
 
         <div
           style={{
@@ -308,7 +551,7 @@ const Cart = () => {
             </div>
           </div>
           <span style={{ fontSize: '22px', fontWeight: 800, color: 'var(--color-primary)', fontFamily: 'var(--font-headings)' }}>
-            {formatPrice(totalAmount)}
+            {formatPrice(finalAmount)}
           </span>
         </div>
 

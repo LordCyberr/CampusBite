@@ -1,5 +1,26 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
+export const AVAILABLE_COUPONS = {
+  CAMPUSBITE: {
+    code: 'CAMPUSBITE',
+    label: 'Campus Welcome Offer',
+    discountPercent: 20,
+    description: 'Flat 20% OFF on all campus canteen orders',
+  },
+  FIRSTBITE: {
+    code: 'FIRSTBITE',
+    label: 'First Order Special',
+    discountPercent: 25,
+    description: 'Flat 25% OFF on your first semester order',
+  },
+  CHAI10: {
+    code: 'CHAI10',
+    label: 'Late Night Chai & Maggi',
+    flatDiscount: 0.24, // ~ ₹20 INR
+    description: 'Flat ₹20 ($0.24) OFF on snacks and chai',
+  },
+};
+
 const CartContext = createContext(null);
 
 export const CartProvider = ({ children }) => {
@@ -9,6 +30,15 @@ export const CartProvider = ({ children }) => {
       return saved ? JSON.parse(saved) : { restaurantId: null, restaurantName: '', items: [] };
     } catch {
       return { restaurantId: null, restaurantName: '', items: [] };
+    }
+  });
+
+  const [appliedCoupon, setAppliedCoupon] = useState(() => {
+    try {
+      const saved = localStorage.getItem('campusbite_coupon');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
     }
   });
 
@@ -96,7 +126,35 @@ export const CartProvider = ({ children }) => {
 
   const clearCart = () => {
     setCartState({ restaurantId: null, restaurantName: '', items: [] });
+    setAppliedCoupon(null);
     localStorage.removeItem('campusbite_cart');
+    localStorage.removeItem('campusbite_coupon');
+  };
+
+  const applyCoupon = (code) => {
+    if (!code || !code.trim()) {
+      return { success: false, message: 'Please enter a coupon code.' };
+    }
+    const cleanCode = code.trim().toUpperCase();
+    const coupon = AVAILABLE_COUPONS[cleanCode];
+    if (!coupon) {
+      return {
+        success: false,
+        message: `Invalid code "${code}". Use CAMPUSBITE for 20% OFF!`,
+      };
+    }
+    setAppliedCoupon(coupon);
+    localStorage.setItem('campusbite_coupon', JSON.stringify(coupon));
+    return {
+      success: true,
+      message: `Coupon "${coupon.code}" applied!`,
+      coupon,
+    };
+  };
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    localStorage.removeItem('campusbite_coupon');
   };
 
   // Running total calculation (For display only; server is sole authority for final total)
@@ -104,6 +162,20 @@ export const CartProvider = ({ children }) => {
     (sum, item) => sum + item.price * item.quantity,
     0
   );
+
+  const calculateDiscount = (coupon, subtotal) => {
+    if (!coupon || subtotal <= 0) return 0;
+    if (coupon.flatDiscount) {
+      return Math.min(coupon.flatDiscount, subtotal);
+    }
+    if (coupon.discountPercent) {
+      return Math.round(((subtotal * coupon.discountPercent) / 100) * 100) / 100;
+    }
+    return 0;
+  };
+
+  const discountAmount = calculateDiscount(appliedCoupon, totalAmount);
+  const finalAmount = Math.max(0, Math.round((totalAmount - discountAmount) * 100) / 100);
 
   const totalCount = cartState.items.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -113,6 +185,11 @@ export const CartProvider = ({ children }) => {
     items: cartState.items,
     totalCount,
     totalAmount,
+    appliedCoupon,
+    discountAmount,
+    finalAmount,
+    applyCoupon,
+    removeCoupon,
     addItem,
     updateQuantity,
     removeItem,
