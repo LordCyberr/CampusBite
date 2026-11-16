@@ -33,7 +33,7 @@ const RestaurantCard = ({ restaurant }) => {
         borderRadius: 'var(--radius)',
         padding: '0',
         overflow: 'hidden',
-        background: '#FFFFFF',
+        background: 'var(--color-bg-surface)',
       }}
     >
       {/* Visual Header Banner */}

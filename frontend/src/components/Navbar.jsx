@@ -16,15 +16,19 @@ import {
   BookOpen,
   RotateCcw,
   Truck,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useCurrency } from '../context/CurrencyContext';
+import { useTheme } from '../context/ThemeContext';
 
 const Navbar = () => {
   const { user, isAuthenticated, role, logout } = useAuth();
   const { totalCount } = useCart();
   const { currencyMode, setCurrencyMode } = useCurrency();
+  const { theme, toggleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -126,6 +130,17 @@ const Navbar = () => {
               $ USD
             </button>
           </div>
+
+          {/* Dark / Light Theme Toggle */}
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="theme-toggle-btn"
+            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            aria-label="Toggle Dark/Light Mode"
+          >
+            {theme === 'dark' ? <Sun size={17} color="#FBBF24" /> : <Moon size={17} color="#64748B" />}
+          </button>
 
           {isAuthenticated ? (
             <>
@@ -313,14 +328,16 @@ const Navbar = () => {
               </button>
             </>
           ) : (
-            <>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Link to="/login" className="btn-secondary btn-sm">
-                <LogIn size={16} /> Log In
+                <LogIn size={15} />
+                <span>Log In</span>
               </Link>
               <Link to="/register" className="btn-primary btn-sm">
-                <UserPlus size={16} /> Register
+                <UserPlus size={15} />
+                <span>Register</span>
               </Link>
-            </>
+            </div>
           )}
         </nav>
 
@@ -372,6 +389,17 @@ const Navbar = () => {
               $ USD
             </button>
           </div>
+
+          {/* Dark / Light Theme Toggle */}
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="theme-toggle-btn"
+            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            aria-label="Toggle Dark/Light Mode"
+          >
+            {theme === 'dark' ? <Sun size={17} color="#FBBF24" /> : <Moon size={17} color="#64748B" />}
+          </button>
 
           {isAuthenticated ? (
             <>

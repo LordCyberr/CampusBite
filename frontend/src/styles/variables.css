@@ -120,3 +120,96 @@
   --focus-ring: 0 0 0 3px rgba(255, 79, 24, 0.25);
   --container-max: 1200px;
 }
+
+/* ==============================================================================
+   Dark Mode Custom Properties (High-Contrast, Sleek Slate Canvas)
+   ============================================================================== */
+[data-theme="dark"] {
+  /* Brand Colours */
+  --color-primary: #FF5E2C;
+  --color-primary-hover: #FF7547;
+  --color-primary-tint: rgba(255, 94, 44, 0.16);
+  --color-primary-subtle: rgba(255, 94, 44, 0.28);
+
+  /* Dark Canvas & Surfaces */
+  --color-bg-page: #0B0F19;
+  --color-bg-surface: #151D2C;
+  --color-border: #242E42;
+  --color-border-subtle: #1B2435;
+
+  /* Typography */
+  --color-text-primary: #F1F5F9;
+  --color-text-secondary: #94A3B8;
+  --color-text-muted: #64748B;
+  --color-text-inverted: #0B0F19;
+
+  /* Food Category Accents */
+  --color-veg: #10B981;
+  --color-veg-bg: rgba(16, 185, 129, 0.15);
+  --color-nonveg: #EF4444;
+  --color-nonveg-bg: rgba(239, 68, 68, 0.15);
+  --color-rating-green: #059669;
+
+  /* Functional Status Colours */
+  --color-success: #10B981;
+  --color-success-surface: rgba(16, 185, 129, 0.15);
+  --color-success-border: #059669;
+
+  --color-warning: #F59E0B;
+  --color-warning-surface: rgba(245, 158, 11, 0.15);
+  --color-warning-border: #D97706;
+
+  --color-error: #EF4444;
+  --color-error-surface: rgba(239, 68, 68, 0.15);
+  --color-error-border: #DC2626;
+
+  --color-info: #38BDF8;
+  --color-info-surface: rgba(56, 189, 248, 0.15);
+  --color-info-border: #0284C7;
+
+  /* Specific Order Status Colours */
+  --status-placed-bg: rgba(245, 158, 11, 0.16);
+  --status-placed-text: #FBBF24;
+  --status-placed-border: rgba(245, 158, 11, 0.35);
+
+  --status-accepted-bg: rgba(56, 189, 248, 0.16);
+  --status-accepted-text: #38BDF8;
+  --status-accepted-border: rgba(56, 189, 248, 0.35);
+
+  --status-preparing-bg: rgba(192, 132, 252, 0.16);
+  --status-preparing-text: #C084FC;
+  --status-preparing-border: rgba(192, 132, 252, 0.35);
+
+  --status-ready-bg: rgba(16, 185, 129, 0.16);
+  --status-ready-text: #34D399;
+  --status-ready-border: rgba(16, 185, 129, 0.35);
+
+  --status-assigned-bg: rgba(96, 165, 250, 0.16);
+  --status-assigned-text: #60A5FA;
+  --status-assigned-border: rgba(96, 165, 250, 0.35);
+
+  --status-out-bg: rgba(255, 94, 44, 0.18);
+  --status-out-text: #FB923C;
+  --status-out-border: rgba(255, 94, 44, 0.4);
+
+  --status-delivered-bg: rgba(16, 185, 129, 0.16);
+  --status-delivered-text: #34D399;
+  --status-delivered-border: rgba(16, 185, 129, 0.35);
+
+  --status-cancelled-bg: #1B2435;
+  --status-cancelled-text: #94A3B8;
+  --status-cancelled-border: #334155;
+
+  --status-refunded-bg: rgba(239, 68, 68, 0.16);
+  --status-refunded-text: #F87171;
+  --status-refunded-border: rgba(239, 68, 68, 0.35);
+
+  /* Shadows for Dark Surfaces */
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 18px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 10px 32px rgba(0, 0, 0, 0.6);
+  --shadow-hover: 0 12px 36px rgba(0, 0, 0, 0.7);
+
+  /* Focus Ring */
+  --focus-ring: 0 0 0 3px rgba(255, 94, 44, 0.35);
+}
