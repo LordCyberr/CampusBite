@@ -33,6 +33,7 @@ const RestaurantMenu = () => {
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
+  const [vegOnly, setVegOnly] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -110,10 +111,20 @@ const RestaurantMenu = () => {
     setDebouncedSearch('');
     setMinPrice('');
     setMaxPrice('');
+    setVegOnly(false);
     setPage(1);
   };
 
-  const hasActiveFilters = Boolean(searchTerm || minPrice || maxPrice);
+  const hasActiveFilters = Boolean(searchTerm || minPrice || maxPrice || vegOnly);
+
+  const displayedDishes = vegOnly
+    ? dishes.filter(
+        (dish) =>
+          !/chicken|meat|beef|pork|bacon|pepperoni|fish|mutton|prawn/i.test(
+            `${dish.name} ${dish.description || ''}`
+          )
+      )
+    : dishes;
 
   return (
     <div className="container page-wrapper">
@@ -260,6 +271,26 @@ const RestaurantMenu = () => {
             />
           </div>
 
+          {/* Swiggy Pure Veg Toggle */}
+          <button
+            type="button"
+            onClick={() => setVegOnly(!vegOnly)}
+            className={`btn-secondary btn-sm ${vegOnly ? 'btn-primary' : ''}`}
+            style={{
+              borderRadius: 'var(--radius-full)',
+              gap: '6px',
+              backgroundColor: vegOnly ? 'var(--color-veg)' : undefined,
+              borderColor: vegOnly ? 'var(--color-veg)' : undefined,
+              color: vegOnly ? '#FFFFFF' : 'var(--color-text-primary)',
+              fontWeight: 700,
+              fontSize: '12px',
+              flex: '0 0 auto',
+            }}
+          >
+            <span className="veg-badge" style={{ width: '13px', height: '13px' }} />
+            <span>Pure Veg</span>
+          </button>
+
           {/* Clear Filters */}
           {hasActiveFilters && (
             <button
@@ -280,7 +311,7 @@ const RestaurantMenu = () => {
           <Loader message="Loading canteen menu..." />
         ) : error ? (
           <ErrorMessage message={error} onRetry={loadRestaurantAndMenu} />
-        ) : dishes.length === 0 ? (
+        ) : displayedDishes.length === 0 ? (
           <EmptyState
             icon={UtensilsCrossed}
             title={hasActiveFilters ? 'No matching dishes' : 'No menu items available'}
@@ -306,7 +337,7 @@ const RestaurantMenu = () => {
                 gap: 'var(--space-5)',
               }}
             >
-              {dishes.map((dish) => (
+              {displayedDishes.map((dish) => (
                 <DishCard
                   key={dish.id}
                   dish={dish}

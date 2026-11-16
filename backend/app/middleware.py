@@ -52,6 +52,12 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
             response.headers["X-Request-ID"] = request_id
             response.headers["X-Process-Time-ms"] = f"{duration_ms:.2f}"
 
+            # Industry-standard HTTP Security Hardening Headers
+            response.headers["X-Content-Type-Options"] = "nosniff"
+            response.headers["X-Frame-Options"] = "DENY"
+            response.headers["X-XSS-Protection"] = "1; mode=block"
+            response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+
             # Log one clean line: method, path, status code, duration, request ID
             logger.info(
                 f"[{request_id}] {request.method} {request.url.path} {response.status_code} {duration_ms:.2f}ms"

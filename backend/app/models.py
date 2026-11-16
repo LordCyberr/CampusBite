@@ -74,7 +74,7 @@ class Restaurant(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     description = Column(String, nullable=True)
-    owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    owner_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
 
     # Relationships
     owner = relationship("User", back_populates="restaurants")
@@ -88,11 +88,11 @@ class MenuItem(Base):
     __tablename__ = "menu_items"
 
     id = Column(Integer, primary_key=True, index=True)
-    restaurant_id = Column(Integer, ForeignKey("restaurants.id"), nullable=False)
+    restaurant_id = Column(Integer, ForeignKey("restaurants.id"), nullable=False, index=True)
     name = Column(String, nullable=False)
     description = Column(String, nullable=True)
     price = Column(Float, nullable=False)
-    is_available = Column(Boolean, default=True, nullable=False)
+    is_available = Column(Boolean, default=True, nullable=False, index=True)
 
     # Relationships
     restaurant = relationship("Restaurant", back_populates="menu_items")
@@ -104,16 +104,16 @@ class Order(Base):
     __tablename__ = "orders"
 
     id = Column(Integer, primary_key=True, index=True)
-    customer_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    restaurant_id = Column(Integer, ForeignKey("restaurants.id"), nullable=False)
-    delivery_partner_id = Column(Integer, ForeignKey("users.id"), nullable=True)
-    status = Column(String, default=OrderStatus.PLACED.value, nullable=False)
+    customer_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    restaurant_id = Column(Integer, ForeignKey("restaurants.id"), nullable=False, index=True)
+    delivery_partner_id = Column(Integer, ForeignKey("users.id"), nullable=True, index=True)
+    status = Column(String, default=OrderStatus.PLACED.value, nullable=False, index=True)
     payment_status = Column(String, default=PaymentStatus.PENDING.value, nullable=False)
-    return_status = Column(String, default=ReturnStatus.NONE.value, nullable=True)
+    return_status = Column(String, default=ReturnStatus.NONE.value, nullable=True, index=True)
     return_reason = Column(String, nullable=True)
     total_amount = Column(Float, default=0.0, nullable=False)
     delivery_address = Column(String, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False, index=True)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
     # Relationships
@@ -144,8 +144,8 @@ class OrderItem(Base):
     __tablename__ = "order_items"
 
     id = Column(Integer, primary_key=True, index=True)
-    order_id = Column(Integer, ForeignKey("orders.id"), nullable=False)
-    menu_item_id = Column(Integer, ForeignKey("menu_items.id"), nullable=False)
+    order_id = Column(Integer, ForeignKey("orders.id"), nullable=False, index=True)
+    menu_item_id = Column(Integer, ForeignKey("menu_items.id"), nullable=False, index=True)
     quantity = Column(Integer, default=1, nullable=False)
     # Price saved at time of order in case restaurant changes menu item price later
     price_at_order = Column(Float, nullable=False)
@@ -160,8 +160,8 @@ class Review(Base):
     __tablename__ = "reviews"
 
     id = Column(Integer, primary_key=True, index=True)
-    order_id = Column(Integer, ForeignKey("orders.id"), unique=True, nullable=False)
-    customer_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    order_id = Column(Integer, ForeignKey("orders.id"), unique=True, nullable=False, index=True)
+    customer_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
     rating = Column(Integer, nullable=False)
     comment = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
@@ -180,7 +180,7 @@ class PaymentLedger(Base):
     __tablename__ = "payment_ledgers"
 
     id = Column(Integer, primary_key=True, index=True)
-    order_id = Column(Integer, ForeignKey("orders.id"), nullable=False)
+    order_id = Column(Integer, ForeignKey("orders.id"), nullable=False, index=True)
     type = Column(String, nullable=False)  # mock_payment or refund
     amount = Column(Float, nullable=False)
     status = Column(String, default="SUCCESS", nullable=False)
@@ -195,8 +195,8 @@ class AdminReminderLog(Base):
     __tablename__ = "admin_reminder_logs"
 
     id = Column(Integer, primary_key=True, index=True)
-    order_id = Column(Integer, ForeignKey("orders.id"), nullable=False)
-    restaurant_id = Column(Integer, ForeignKey("restaurants.id"), nullable=False)
+    order_id = Column(Integer, ForeignKey("orders.id"), nullable=False, index=True)
+    restaurant_id = Column(Integer, ForeignKey("restaurants.id"), nullable=False, index=True)
     message = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
 

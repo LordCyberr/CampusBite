@@ -126,6 +126,64 @@ const Restaurants = () => {
         </div>
       </div>
 
+      {/* Campus Exclusive Offers Banner */}
+      <div
+        style={{
+          background: 'linear-gradient(135deg, rgba(255, 79, 24, 0.08) 0%, rgba(255, 158, 44, 0.12) 100%)',
+          border: '1px solid rgba(255, 79, 24, 0.25)',
+          borderRadius: 'var(--radius)',
+          padding: '16px 20px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '12px',
+          marginBottom: 'var(--space-8)',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div
+            style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              backgroundColor: 'var(--color-primary)',
+              color: '#FFFFFF',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '18px',
+              boxShadow: '0 2px 8px rgba(255, 79, 24, 0.35)',
+            }}
+          >
+            ⚡
+          </div>
+          <div>
+            <div style={{ fontWeight: 800, fontSize: '15px', color: 'var(--color-text-primary)' }}>
+              Campus Express Delivery Active
+            </div>
+            <div style={{ fontSize: '13px', color: 'var(--color-text-secondary)' }}>
+              Order now and student couriers deliver straight to your dorm room or library in ~15-20 mins!
+            </div>
+          </div>
+        </div>
+
+        <div
+          style={{
+            backgroundColor: 'var(--color-bg-surface)',
+            border: '1px dashed var(--color-primary)',
+            padding: '6px 14px',
+            borderRadius: '8px',
+            fontWeight: 800,
+            fontSize: '13px',
+            color: 'var(--color-primary)',
+            letterSpacing: '0.04em',
+          }}
+        >
+          CODE: CAMPUSBITE
+        </div>
+      </div>
+
       {/* Content States */}
       {loading ? (
         <Loader message="Fetching campus restaurants..." />
