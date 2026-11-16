@@ -34,13 +34,13 @@ def set_openai_client_override(client: Optional[Any]) -> None:
 def get_openai_client() -> OpenAI:
     """
     Returns an OpenAI client configured with OPENAI_API_KEY from environment variables.
-    Raises HTTP 503 if the key is not set.
+    Raises HTTP 503 if the key is not set or is still a placeholder.
     """
     if _client_override is not None:
         return _client_override
 
     api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key or not api_key.strip():
+    if not api_key or not api_key.strip() or api_key.strip() in {"change-me", "your-openai-api-key"}:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="AI insights service is unavailable: OPENAI_API_KEY is not configured.",
@@ -225,6 +225,13 @@ async def generate_order_insights(
             raise HTTPException(
                 status_code=status.HTTP_504_GATEWAY_TIMEOUT,
                 detail="OpenAI service timed out while generating insights.",
+            )
+
+        except openai.AuthenticationError as ae:
+            logger.error(f"OpenAI AuthenticationError: {ae}")
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="OpenAI API key is invalid or unauthorized. Please verify your OPENAI_API_KEY in backend/.env.",
             )
 
         except HTTPException:
