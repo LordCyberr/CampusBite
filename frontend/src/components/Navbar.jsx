@@ -154,10 +154,10 @@ const Navbar = () => {
               className="campus-location-selector"
               title="Campus Delivery Zone: Central Campus"
               style={{
-                display: 'flex',
+                display: 'inline-flex',
                 alignItems: 'center',
-                gap: '6px',
-                padding: '5px 10px',
+                gap: '5px',
+                padding: '0 12px',
                 borderRadius: 'var(--radius-full)',
                 backgroundColor: 'var(--color-bg-page)',
                 border: '1px solid var(--color-border)',
@@ -165,13 +165,17 @@ const Navbar = () => {
                 color: 'var(--color-text-secondary)',
                 cursor: 'default',
                 userSelect: 'none',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+                height: '34px',
+                boxSizing: 'border-box',
               }}
             >
-              <MapPin size={13} color="var(--color-primary)" />
-              <span style={{ fontWeight: 600, color: 'var(--color-text-primary)' }}>
+              <MapPin size={13} color="var(--color-primary)" style={{ flexShrink: 0 }} />
+              <span style={{ fontWeight: 600, color: 'var(--color-text-primary)', whiteSpace: 'nowrap' }}>
                 Central Campus
               </span>
-              <ChevronDown size={12} color="var(--color-text-muted)" />
+              <ChevronDown size={12} color="var(--color-text-muted)" style={{ flexShrink: 0 }} />
             </div>
           </div>
 
@@ -183,7 +187,9 @@ const Navbar = () => {
                 display: 'flex',
                 alignItems: 'stretch',
                 height: '66px',
-                gap: '8px',
+                gap: '4px',
+                flexShrink: 0,
+                whiteSpace: 'nowrap',
               }}
             >
               {role === 'customer' && (
@@ -261,9 +267,9 @@ const Navbar = () => {
           )}
 
           {/* Right Zone: Currency, Theme, Cart & Profile Avatar Menu */}
-          <div className="desktop-nav-right" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div className="desktop-nav-right" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
             {/* Currency Mode Selector */}
-            <div className="currency-switcher" title="Toggle Currency ($ USD / ₹ INR / Dual)">
+            <div className="currency-switcher" title="Toggle Currency ($ USD / ₹ INR / Dual)" style={{ height: '34px' }}>
               <button
                 type="button"
                 className={`currency-btn ${currencyMode === 'both' ? 'active' : ''}`}
@@ -294,6 +300,7 @@ const Navbar = () => {
               className="theme-toggle-btn"
               title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
               aria-label="Toggle Theme"
+              style={{ width: '34px', height: '34px', minHeight: '34px', maxHeight: '34px', flexShrink: 0 }}
             >
               {theme === 'dark' ? <Sun size={16} color="#FBBF24" /> : <Moon size={16} color="#64748B" />}
             </button>
@@ -306,14 +313,16 @@ const Navbar = () => {
                     to="/cart"
                     className={totalCount > 0 ? 'btn-primary btn-sm' : 'btn-secondary btn-sm'}
                     style={{
-                      height: '36px',
-                      padding: '0 14px',
+                      height: '34px',
+                      padding: '0 12px',
                       borderRadius: 'var(--radius-full)',
                       fontWeight: 700,
-                      gap: '7px',
+                      gap: '6px',
+                      whiteSpace: 'nowrap',
+                      flexShrink: 0,
                     }}
                   >
-                    <ShoppingBag size={15} />
+                    <ShoppingBag size={14} />
                     <span>Cart</span>
                     {totalCount > 0 && (
                       <span
@@ -334,21 +343,24 @@ const Navbar = () => {
                 )}
 
                 {/* Profile Avatar Dropdown Trigger */}
-                <div style={{ position: 'relative' }} ref={dropdownRef}>
+                <div style={{ position: 'relative', flexShrink: 0 }} ref={dropdownRef}>
                   <button
                     type="button"
                     onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
                     style={{
-                      display: 'flex',
+                      display: 'inline-flex',
                       alignItems: 'center',
-                      gap: '8px',
-                      padding: '4px 10px 4px 4px',
+                      gap: '7px',
+                      height: '34px',
+                      padding: '0 10px 0 3px',
                       backgroundColor: profileDropdownOpen ? 'var(--color-bg-page)' : 'transparent',
                       border: '1px solid var(--color-border)',
                       borderRadius: 'var(--radius-full)',
                       cursor: 'pointer',
                       transition: 'all 0.15s ease',
                       outline: 'none',
+                      whiteSpace: 'nowrap',
+                      flexShrink: 0,
                     }}
                     aria-label="User Menu"
                     aria-expanded={profileDropdownOpen}
@@ -356,8 +368,8 @@ const Navbar = () => {
                     {/* User Avatar Circle */}
                     <div
                       style={{
-                        width: '30px',
-                        height: '30px',
+                        width: '28px',
+                        height: '28px',
                         borderRadius: '50%',
                         background: 'linear-gradient(135deg, #FF4F18 0%, #FF7A45 100%)',
                         color: '#FFFFFF',
@@ -365,38 +377,25 @@ const Navbar = () => {
                         alignItems: 'center',
                         justifyContent: 'center',
                         fontWeight: 800,
-                        fontSize: '13px',
+                        fontSize: '12.5px',
                         boxShadow: '0 2px 6px rgba(255, 79, 24, 0.25)',
+                        flexShrink: 0,
                       }}
                     >
                       {userInitial}
                     </div>
 
-                    <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-text-primary)' }}>
+                    <span style={{ fontSize: '13.5px', fontWeight: 600, color: 'var(--color-text-primary)', whiteSpace: 'nowrap' }}>
                       {firstName}
                     </span>
 
-                    <span
-                      style={{
-                        fontSize: '10px',
-                        fontWeight: 700,
-                        backgroundColor: 'var(--color-primary-tint)',
-                        color: 'var(--color-primary)',
-                        padding: '2px 6px',
-                        borderRadius: '4px',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.04em',
-                      }}
-                    >
-                      {roleLabel}
-                    </span>
-
                     <ChevronDown
-                      size={14}
+                      size={13}
                       color="var(--color-text-muted)"
                       style={{
                         transform: profileDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
                         transition: 'transform 0.2s ease',
+                        flexShrink: 0,
                       }}
                     />
                   </button>
@@ -441,6 +440,7 @@ const Navbar = () => {
                             justifyContent: 'center',
                             fontWeight: 800,
                             fontSize: '15px',
+                            flexShrink: 0,
                           }}
                         >
                           {userInitial}
@@ -460,11 +460,23 @@ const Navbar = () => {
                           </div>
                           <div
                             style={{
+                              fontSize: '11px',
+                              color: 'var(--color-primary)',
+                              fontWeight: 700,
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.04em',
+                            }}
+                          >
+                            🎓 {roleLabel} Account
+                          </div>
+                          <div
+                            style={{
                               fontSize: '12px',
                               color: 'var(--color-text-muted)',
                               whiteSpace: 'nowrap',
                               overflow: 'hidden',
                               textOverflow: 'ellipsis',
+                              marginTop: '2px',
                             }}
                           >
                             {user?.email || ''}
@@ -812,6 +824,8 @@ const Navbar = () => {
             color: var(--color-text-secondary);
             text-decoration: none;
             position: relative;
+            white-space: nowrap !important;
+            flex-shrink: 0;
             transition: color 0.15s ease;
           }
           .nav-tab-item:hover {

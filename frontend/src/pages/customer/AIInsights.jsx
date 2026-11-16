@@ -112,11 +112,11 @@ const AIInsights = () => {
 
       {/* Sample Question Chips */}
       <div style={{ marginBottom: 'var(--space-6)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-1)', marginBottom: 'var(--space-2)', color: 'var(--color-text-muted)', fontSize: 'var(--font-size-xs)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-1)', marginBottom: 'var(--space-3)', color: 'var(--color-text-muted)', fontSize: 'var(--font-size-xs)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
           <HelpCircle size={14} />
           <span>Suggested Questions:</span>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 'var(--space-2)' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '10px' }}>
           {SAMPLE_QUESTIONS.map((item, idx) => {
             const Icon = item.icon;
             return (
@@ -127,29 +127,36 @@ const AIInsights = () => {
                 style={{
                   display: 'flex',
                   alignItems: 'flex-start',
-                  gap: 'var(--space-2)',
-                  padding: 'var(--space-3)',
+                  justifyContent: 'flex-start',
+                  gap: '10px',
+                  padding: '12px 14px',
                   backgroundColor: 'var(--color-bg-surface)',
                   border: '1px solid var(--color-border)',
-                  borderRadius: 'var(--radius)',
+                  borderRadius: '12px',
                   textAlign: 'left',
                   cursor: 'pointer',
-                  fontSize: 'var(--font-size-xs)',
+                  fontSize: '13px',
                   color: 'var(--color-text-primary)',
-                  lineHeight: 1.4,
+                  lineHeight: 1.45,
+                  whiteSpace: 'normal',
+                  width: '100%',
+                  height: 'auto',
                   transition: 'all 0.15s ease',
+                  boxShadow: 'var(--shadow-sm)',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.borderColor = 'var(--color-primary)';
-                  e.currentTarget.style.backgroundColor = 'rgba(235, 94, 40, 0.04)';
+                  e.currentTarget.style.backgroundColor = 'var(--color-primary-tint)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.borderColor = 'var(--color-border)';
                   e.currentTarget.style.backgroundColor = 'var(--color-bg-surface)';
+                  e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
                 <Icon size={16} color="var(--color-primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
-                <span>{item.text}</span>
+                <span style={{ whiteSpace: 'normal', flex: 1 }}>{item.text}</span>
               </button>
             );
           })}
