@@ -128,8 +128,8 @@
   /* Brand Colours */
   --color-primary: #FF5E2C;
   --color-primary-hover: #FF7547;
-  --color-primary-tint: rgba(255, 94, 44, 0.16);
-  --color-primary-subtle: rgba(255, 94, 44, 0.28);
+  --color-primary-tint: rgba(255, 94, 44, 0.12);
+  --color-primary-subtle: rgba(255, 94, 44, 0.22);
 
   /* Dark Canvas & Surfaces */
   --color-bg-page: #0B0F19;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import {
   UtensilsCrossed,
@@ -20,6 +20,7 @@ import {
   Moon,
   Store,
   MapPin,
+  ChevronDown,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -32,13 +33,33 @@ const Navbar = () => {
   const { currencyMode, setCurrencyMode } = useCurrency();
   const { theme, toggleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Close profile dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setProfileDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Close mobile drawer on route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+    setProfileDropdownOpen(false);
+  }, [location.pathname]);
+
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    setProfileDropdownOpen(false);
     setMobileMenuOpen(false);
+    navigate('/login');
   };
 
   const getHomeLink = () => {
@@ -48,32 +69,16 @@ const Navbar = () => {
     return '/restaurants';
   };
 
-  const navLinkStyle = ({ isActive }) => ({
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '6px',
-    padding: '7px 12px',
-    borderRadius: '8px',
-    fontSize: '14px',
-    fontWeight: isActive ? 700 : 500,
-    color: isActive ? 'var(--color-primary)' : 'var(--color-text-secondary)',
-    backgroundColor: isActive ? 'var(--color-primary-tint)' : 'transparent',
-    textDecoration: 'none',
-    transition: 'all 0.15s ease',
-  });
+  // User monogram for avatar
+  const userInitial = (user?.name || 'U').trim().charAt(0).toUpperCase();
+  const firstName = (user?.name || 'User').split(' ')[0];
 
-  const mobileLinkStyle = ({ isActive }) => ({
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px',
-    padding: '10px 14px',
-    borderRadius: '8px',
-    fontSize: '15px',
-    fontWeight: isActive ? 700 : 500,
-    color: isActive ? 'var(--color-primary)' : 'var(--color-text-primary)',
-    backgroundColor: isActive ? 'var(--color-primary-tint)' : 'transparent',
-    textDecoration: 'none',
-  });
+  const roleLabel =
+    role === 'restaurant_owner'
+      ? 'Owner'
+      : role === 'delivery_partner'
+      ? 'Courier'
+      : 'Student';
 
   return (
     <>
@@ -94,12 +99,12 @@ const Navbar = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            height: '68px',
+            height: '66px',
             gap: '16px',
           }}
         >
-          {/* Left Zone: Brand Logo & Campus Badge */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {/* Left Zone: Brand Logo & Campus Location Dropdown */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
             <Link
               to={getHomeLink()}
               style={{
@@ -111,13 +116,14 @@ const Navbar = () => {
                 fontWeight: 800,
                 color: 'var(--color-primary)',
                 textDecoration: 'none',
+                letterSpacing: '-0.02em',
               }}
               onClick={() => setMobileMenuOpen(false)}
             >
               <div
                 style={{
-                  width: '38px',
-                  height: '38px',
+                  width: '36px',
+                  height: '36px',
                   borderRadius: '10px',
                   backgroundColor: 'var(--color-primary)',
                   color: '#FFFFFF',
@@ -125,34 +131,83 @@ const Navbar = () => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   boxShadow: '0 2px 8px rgba(255, 79, 24, 0.3)',
+                  flexShrink: 0,
                 }}
               >
-                <UtensilsCrossed size={20} />
+                <UtensilsCrossed size={19} />
               </div>
               <span>CampusBite</span>
             </Link>
 
-            {/* Subtle Campus Location Badge (Hidden on small mobile) */}
-            <div className="campus-location-pill" style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: 'var(--color-text-muted)' }}>
+            {/* Subtle Divider */}
+            <div
+              className="navbar-brand-divider"
+              style={{
+                width: '1px',
+                height: '22px',
+                backgroundColor: 'var(--color-border)',
+              }}
+            />
+
+            {/* Campus Location Pill (Interactive Zomato/Swiggy Location Selector) */}
+            <div
+              className="campus-location-selector"
+              title="Campus Delivery Zone: Central Campus"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '5px 10px',
+                borderRadius: 'var(--radius-full)',
+                backgroundColor: 'var(--color-bg-page)',
+                border: '1px solid var(--color-border)',
+                fontSize: '12px',
+                color: 'var(--color-text-secondary)',
+                cursor: 'default',
+                userSelect: 'none',
+              }}
+            >
               <MapPin size={13} color="var(--color-primary)" />
-              <span style={{ fontWeight: 600 }}>Campus</span>
+              <span style={{ fontWeight: 600, color: 'var(--color-text-primary)' }}>
+                Central Campus
+              </span>
+              <ChevronDown size={12} color="var(--color-text-muted)" />
             </div>
           </div>
 
-          {/* Center Zone: Desktop Primary Navigation Tabs */}
+          {/* Center Zone: Desktop Primary Navigation Tabs with Animated Bottom Indicator */}
           {isAuthenticated && (
-            <nav className="desktop-nav-center" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <nav
+              className="desktop-nav-center"
+              style={{
+                display: 'flex',
+                alignItems: 'stretch',
+                height: '66px',
+                gap: '8px',
+              }}
+            >
               {role === 'customer' && (
                 <>
-                  <NavLink to="/restaurants" style={navLinkStyle}>
+                  <NavLink
+                    to="/restaurants"
+                    className={({ isActive }) => `nav-tab-item ${isActive ? 'active' : ''}`}
+                  >
                     <Store size={16} />
                     <span>Canteens</span>
                   </NavLink>
-                  <NavLink to="/orders" style={navLinkStyle}>
+
+                  <NavLink
+                    to="/orders"
+                    className={({ isActive }) => `nav-tab-item ${isActive ? 'active' : ''}`}
+                  >
                     <Clock size={16} />
                     <span>My Orders</span>
                   </NavLink>
-                  <NavLink to="/insights" style={navLinkStyle}>
+
+                  <NavLink
+                    to="/insights"
+                    className={({ isActive }) => `nav-tab-item ${isActive ? 'active' : ''}`}
+                  >
                     <Sparkles size={16} />
                     <span>AI Insights</span>
                   </NavLink>
@@ -161,19 +216,32 @@ const Navbar = () => {
 
               {role === 'restaurant_owner' && (
                 <>
-                  <NavLink to="/owner" end style={navLinkStyle}>
+                  <NavLink
+                    to="/owner"
+                    end
+                    className={({ isActive }) => `nav-tab-item ${isActive ? 'active' : ''}`}
+                  >
                     <LayoutDashboard size={16} />
                     <span>Dashboard</span>
                   </NavLink>
-                  <NavLink to="/owner/orders" style={navLinkStyle}>
+                  <NavLink
+                    to="/owner/orders"
+                    className={({ isActive }) => `nav-tab-item ${isActive ? 'active' : ''}`}
+                  >
                     <ClipboardList size={16} />
                     <span>Orders</span>
                   </NavLink>
-                  <NavLink to="/owner/menu" style={navLinkStyle}>
+                  <NavLink
+                    to="/owner/menu"
+                    className={({ isActive }) => `nav-tab-item ${isActive ? 'active' : ''}`}
+                  >
                     <BookOpen size={16} />
                     <span>Menu</span>
                   </NavLink>
-                  <NavLink to="/owner/returns" style={navLinkStyle}>
+                  <NavLink
+                    to="/owner/returns"
+                    className={({ isActive }) => `nav-tab-item ${isActive ? 'active' : ''}`}
+                  >
                     <RotateCcw size={16} />
                     <span>Returns</span>
                   </NavLink>
@@ -181,7 +249,10 @@ const Navbar = () => {
               )}
 
               {role === 'delivery_partner' && (
-                <NavLink to="/delivery" style={navLinkStyle}>
+                <NavLink
+                  to="/delivery"
+                  className={({ isActive }) => `nav-tab-item ${isActive ? 'active' : ''}`}
+                >
                   <Truck size={16} />
                   <span>Delivery Queue</span>
                 </NavLink>
@@ -189,7 +260,7 @@ const Navbar = () => {
             </nav>
           )}
 
-          {/* Right Zone: Controls, Cart, Theme, Currency & User */}
+          {/* Right Zone: Currency, Theme, Cart & Profile Avatar Menu */}
           <div className="desktop-nav-right" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             {/* Currency Mode Selector */}
             <div className="currency-switcher" title="Toggle Currency ($ USD / ₹ INR / Dual)">
@@ -216,15 +287,15 @@ const Navbar = () => {
               </button>
             </div>
 
-            {/* Dark / Light Theme Toggle */}
+            {/* Dark / Light Theme Toggle Button */}
             <button
               type="button"
               onClick={toggleTheme}
               className="theme-toggle-btn"
               title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-              aria-label="Toggle Dark/Light Mode"
+              aria-label="Toggle Theme"
             >
-              {theme === 'dark' ? <Sun size={17} color="#FBBF24" /> : <Moon size={17} color="#64748B" />}
+              {theme === 'dark' ? <Sun size={16} color="#FBBF24" /> : <Moon size={16} color="#64748B" />}
             </button>
 
             {isAuthenticated ? (
@@ -233,11 +304,13 @@ const Navbar = () => {
                 {role === 'customer' && (
                   <Link
                     to="/cart"
-                    className="btn-primary btn-sm"
+                    className={totalCount > 0 ? 'btn-primary btn-sm' : 'btn-secondary btn-sm'}
                     style={{
-                      position: 'relative',
-                      textDecoration: 'none',
-                      gap: '6px',
+                      height: '36px',
+                      padding: '0 14px',
+                      borderRadius: 'var(--radius-full)',
+                      fontWeight: 700,
+                      gap: '7px',
                     }}
                   >
                     <ShoppingBag size={15} />
@@ -260,49 +333,255 @@ const Navbar = () => {
                   </Link>
                 )}
 
-                {/* User Profile Chip */}
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    padding: '5px 12px',
-                    backgroundColor: 'var(--color-bg-page)',
-                    borderRadius: 'var(--radius-full)',
-                    border: '1px solid var(--color-border)',
-                    fontSize: '13px',
-                    fontWeight: 600,
-                    maxWidth: '180px',
-                  }}
-                >
-                  <User size={14} color="var(--color-primary)" />
-                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {user?.name || 'User'}
-                  </span>
-                  <span style={{ color: 'var(--color-text-muted)', fontSize: '10px', textTransform: 'capitalize' }}>
-                    ({role === 'restaurant_owner' ? 'Owner' : role === 'delivery_partner' ? 'Courier' : 'Student'})
-                  </span>
-                </div>
+                {/* Profile Avatar Dropdown Trigger */}
+                <div style={{ position: 'relative' }} ref={dropdownRef}>
+                  <button
+                    type="button"
+                    onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '4px 10px 4px 4px',
+                      backgroundColor: profileDropdownOpen ? 'var(--color-bg-page)' : 'transparent',
+                      border: '1px solid var(--color-border)',
+                      borderRadius: 'var(--radius-full)',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease',
+                      outline: 'none',
+                    }}
+                    aria-label="User Menu"
+                    aria-expanded={profileDropdownOpen}
+                  >
+                    {/* User Avatar Circle */}
+                    <div
+                      style={{
+                        width: '30px',
+                        height: '30px',
+                        borderRadius: '50%',
+                        background: 'linear-gradient(135deg, #FF4F18 0%, #FF7A45 100%)',
+                        color: '#FFFFFF',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontWeight: 800,
+                        fontSize: '13px',
+                        boxShadow: '0 2px 6px rgba(255, 79, 24, 0.25)',
+                      }}
+                    >
+                      {userInitial}
+                    </div>
 
-                {/* Logout Button */}
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  className="btn-secondary btn-sm"
-                  title="Log Out"
-                  aria-label="Log Out"
-                  style={{ padding: '6px 10px' }}
-                >
-                  <LogOut size={16} />
-                </button>
+                    <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-text-primary)' }}>
+                      {firstName}
+                    </span>
+
+                    <span
+                      style={{
+                        fontSize: '10px',
+                        fontWeight: 700,
+                        backgroundColor: 'var(--color-primary-tint)',
+                        color: 'var(--color-primary)',
+                        padding: '2px 6px',
+                        borderRadius: '4px',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.04em',
+                      }}
+                    >
+                      {roleLabel}
+                    </span>
+
+                    <ChevronDown
+                      size={14}
+                      color="var(--color-text-muted)"
+                      style={{
+                        transform: profileDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                        transition: 'transform 0.2s ease',
+                      }}
+                    />
+                  </button>
+
+                  {/* Elegant Floating Popover Dropdown Card */}
+                  {profileDropdownOpen && (
+                    <div
+                      className="profile-popover-card"
+                      style={{
+                        position: 'absolute',
+                        right: 0,
+                        top: 'calc(100% + 8px)',
+                        width: '250px',
+                        backgroundColor: 'var(--color-bg-surface)',
+                        border: '1px solid var(--color-border)',
+                        borderRadius: '14px',
+                        boxShadow: 'var(--shadow-lg)',
+                        padding: '14px',
+                        zIndex: 200,
+                        animation: 'popoverFadeIn 0.15s ease-out',
+                      }}
+                    >
+                      {/* Popover Header with Full User Info */}
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                          paddingBottom: '12px',
+                          borderBottom: '1px solid var(--color-border-subtle)',
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: '38px',
+                            height: '38px',
+                            borderRadius: '50%',
+                            background: 'linear-gradient(135deg, #FF4F18 0%, #FF7A45 100%)',
+                            color: '#FFFFFF',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontWeight: 800,
+                            fontSize: '15px',
+                          }}
+                        >
+                          {userInitial}
+                        </div>
+                        <div style={{ overflow: 'hidden' }}>
+                          <div
+                            style={{
+                              fontWeight: 700,
+                              fontSize: '14px',
+                              color: 'var(--color-text-primary)',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                            }}
+                          >
+                            {user?.name || 'Student User'}
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '12px',
+                              color: 'var(--color-text-muted)',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                            }}
+                          >
+                            {user?.email || ''}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Dropdown Navigation Links */}
+                      <div style={{ padding: '8px 0', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                        {role === 'customer' && (
+                          <>
+                            <Link
+                              to="/orders"
+                              className="dropdown-menu-link"
+                              onClick={() => setProfileDropdownOpen(false)}
+                            >
+                              <Clock size={15} />
+                              <span>My Order History</span>
+                            </Link>
+                            <Link
+                              to="/cart"
+                              className="dropdown-menu-link"
+                              onClick={() => setProfileDropdownOpen(false)}
+                            >
+                              <ShoppingBag size={15} />
+                              <span>View Cart ({totalCount})</span>
+                            </Link>
+                            <Link
+                              to="/insights"
+                              className="dropdown-menu-link"
+                              onClick={() => setProfileDropdownOpen(false)}
+                            >
+                              <Sparkles size={15} />
+                              <span>AI Food Insights</span>
+                            </Link>
+                          </>
+                        )}
+
+                        {role === 'restaurant_owner' && (
+                          <>
+                            <Link
+                              to="/owner"
+                              className="dropdown-menu-link"
+                              onClick={() => setProfileDropdownOpen(false)}
+                            >
+                              <LayoutDashboard size={15} />
+                              <span>Kitchen Overview</span>
+                            </Link>
+                            <Link
+                              to="/owner/orders"
+                              className="dropdown-menu-link"
+                              onClick={() => setProfileDropdownOpen(false)}
+                            >
+                              <ClipboardList size={15} />
+                              <span>Order Queue</span>
+                            </Link>
+                            <Link
+                              to="/owner/menu"
+                              className="dropdown-menu-link"
+                              onClick={() => setProfileDropdownOpen(false)}
+                            >
+                              <BookOpen size={15} />
+                              <span>Menu Management</span>
+                            </Link>
+                          </>
+                        )}
+
+                        {role === 'delivery_partner' && (
+                          <Link
+                            to="/delivery"
+                            className="dropdown-menu-link"
+                            onClick={() => setProfileDropdownOpen(false)}
+                          >
+                            <Truck size={15} />
+                            <span>Delivery Tasks</span>
+                          </Link>
+                        )}
+                      </div>
+
+                      {/* Dropdown Logout Action */}
+                      <div style={{ borderTop: '1px solid var(--color-border-subtle)', paddingTop: '8px' }}>
+                        <button
+                          type="button"
+                          onClick={handleLogout}
+                          style={{
+                            width: '100%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            padding: '8px 10px',
+                            borderRadius: '8px',
+                            border: 'none',
+                            background: 'transparent',
+                            color: 'var(--color-error)',
+                            fontSize: '13px',
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            transition: 'background-color 0.15s ease',
+                          }}
+                          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--color-error-surface)')}
+                          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                        >
+                          <LogOut size={15} />
+                          <span>Sign Out</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </>
             ) : (
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Link to="/login" className="btn-secondary btn-sm">
+                <Link to="/login" className="btn-secondary btn-sm" style={{ height: '36px', padding: '0 14px' }}>
                   <LogIn size={15} />
                   <span>Log In</span>
                 </Link>
-                <Link to="/register" className="btn-primary btn-sm">
+                <Link to="/register" className="btn-primary btn-sm" style={{ height: '36px', padding: '0 14px' }}>
                   <UserPlus size={15} />
                   <span>Register</span>
                 </Link>
@@ -310,7 +589,7 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Mobile Right Controls: Theme + Cart + Hamburger Toggle */}
+          {/* Mobile Right Controls: Theme + Cart + Menu Button */}
           <div className="mobile-header-controls" style={{ display: 'none', alignItems: 'center', gap: '8px' }}>
             <button
               type="button"
@@ -326,82 +605,98 @@ const Navbar = () => {
               <Link
                 to="/cart"
                 className="btn-primary btn-sm"
-                style={{ padding: '6px 10px', textDecoration: 'none', gap: '4px' }}
+                style={{
+                  height: '34px',
+                  padding: '0 10px',
+                  borderRadius: 'var(--radius-full)',
+                  gap: '4px',
+                }}
                 aria-label="View Cart"
               >
-                <ShoppingBag size={15} />
+                <ShoppingBag size={14} />
                 {totalCount > 0 && <span style={{ fontWeight: 800 }}>{totalCount}</span>}
               </Link>
             )}
 
             <button
               type="button"
-              className="mobile-toggle btn-secondary btn-sm"
+              className="btn-secondary btn-sm"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle navigation menu"
-              style={{ padding: '6px 10px' }}
+              style={{
+                width: '36px',
+                height: '36px',
+                padding: 0,
+                borderRadius: '8px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              aria-label="Toggle Mobile Menu"
             >
-              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+              {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
           </div>
         </div>
 
-        {/* Mobile Collapsible Drawer Menu */}
+        {/* Mobile Slide-Down Drawer */}
         {mobileMenuOpen && (
           <div
+            className="mobile-drawer"
             style={{
               backgroundColor: 'var(--color-bg-surface)',
-              borderTop: '1px solid var(--color-border)',
+              borderBottom: '1px solid var(--color-border)',
               padding: '16px 20px',
               display: 'flex',
               flexDirection: 'column',
-              gap: '12px',
-              boxShadow: 'var(--shadow-lg)',
+              gap: '14px',
+              boxShadow: 'var(--shadow-md)',
+              animation: 'drawerSlideDown 0.2s ease-out',
             }}
-            className="mobile-drawer"
           >
-            {/* User Profile Card on Mobile */}
-            {isAuthenticated ? (
+            {/* User Profile Info on Mobile */}
+            {isAuthenticated && (
               <div
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '12px',
-                  padding: '12px',
+                  gap: '10px',
+                  padding: '10px 12px',
                   backgroundColor: 'var(--color-bg-page)',
-                  borderRadius: 'var(--radius)',
+                  borderRadius: '10px',
                   border: '1px solid var(--color-border)',
-                  marginBottom: '4px',
                 }}
               >
                 <div
                   style={{
-                    width: '38px',
-                    height: '38px',
+                    width: '36px',
+                    height: '36px',
                     borderRadius: '50%',
-                    backgroundColor: 'var(--color-primary-tint)',
-                    color: 'var(--color-primary)',
+                    background: 'linear-gradient(135deg, #FF4F18 0%, #FF7A45 100%)',
+                    color: '#FFFFFF',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontWeight: 800,
+                    fontSize: '14px',
                   }}
                 >
-                  <User size={20} />
+                  {userInitial}
                 </div>
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: '15px' }}>{user?.name}</div>
-                  <div style={{ fontSize: '12px', color: 'var(--color-text-secondary)' }}>
-                    {user?.email} • <span style={{ textTransform: 'capitalize' }}>{role?.replace('_', ' ')}</span>
+                  <div style={{ fontWeight: 700, fontSize: '14px', color: 'var(--color-text-primary)' }}>
+                    {user?.name || 'User'}
+                  </div>
+                  <div style={{ fontSize: '11px', color: 'var(--color-primary)', fontWeight: 600 }}>
+                    {roleLabel} • {user?.email}
                   </div>
                 </div>
               </div>
-            ) : null}
+            )}
 
-            {/* Currency Mode Selector on Mobile */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 4px' }}>
+            {/* Currency Mode Switcher on Mobile */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 2px' }}>
               <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-text-secondary)' }}>
-                Currency Display:
+                Currency:
               </span>
               <div className="currency-switcher">
                 <button
@@ -428,45 +723,45 @@ const Navbar = () => {
               </div>
             </div>
 
-            {/* Navigation Links on Mobile */}
+            {/* Mobile Nav Links */}
             {isAuthenticated ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                 {role === 'customer' && (
                   <>
-                    <NavLink to="/restaurants" style={mobileLinkStyle} onClick={() => setMobileMenuOpen(false)}>
+                    <NavLink to="/restaurants" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
                       <Store size={18} />
                       <span>Campus Canteens</span>
                     </NavLink>
-                    <NavLink to="/orders" style={mobileLinkStyle} onClick={() => setMobileMenuOpen(false)}>
+                    <NavLink to="/orders" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
                       <Clock size={18} />
                       <span>My Orders</span>
                     </NavLink>
-                    <NavLink to="/insights" style={mobileLinkStyle} onClick={() => setMobileMenuOpen(false)}>
+                    <NavLink to="/insights" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
                       <Sparkles size={18} />
                       <span>AI Insights</span>
                     </NavLink>
-                    <NavLink to="/cart" style={mobileLinkStyle} onClick={() => setMobileMenuOpen(false)}>
+                    <NavLink to="/cart" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
                       <ShoppingBag size={18} />
-                      <span>My Cart ({totalCount} items)</span>
+                      <span>Cart ({totalCount} items)</span>
                     </NavLink>
                   </>
                 )}
 
                 {role === 'restaurant_owner' && (
                   <>
-                    <NavLink to="/owner" end style={mobileLinkStyle} onClick={() => setMobileMenuOpen(false)}>
+                    <NavLink to="/owner" end className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
                       <LayoutDashboard size={18} />
                       <span>Kitchen Dashboard</span>
                     </NavLink>
-                    <NavLink to="/owner/orders" style={mobileLinkStyle} onClick={() => setMobileMenuOpen(false)}>
+                    <NavLink to="/owner/orders" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
                       <ClipboardList size={18} />
                       <span>Order Management</span>
                     </NavLink>
-                    <NavLink to="/owner/menu" style={mobileLinkStyle} onClick={() => setMobileMenuOpen(false)}>
+                    <NavLink to="/owner/menu" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
                       <BookOpen size={18} />
                       <span>Menu Catalog</span>
                     </NavLink>
-                    <NavLink to="/owner/returns" style={mobileLinkStyle} onClick={() => setMobileMenuOpen(false)}>
+                    <NavLink to="/owner/returns" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
                       <RotateCcw size={18} />
                       <span>Return Claims</span>
                     </NavLink>
@@ -474,9 +769,9 @@ const Navbar = () => {
                 )}
 
                 {role === 'delivery_partner' && (
-                  <NavLink to="/delivery" style={mobileLinkStyle} onClick={() => setMobileMenuOpen(false)}>
+                  <NavLink to="/delivery" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
                     <Truck size={18} />
-                    <span>Courier Delivery Queue</span>
+                    <span>Courier Queue</span>
                   </NavLink>
                 )}
 
@@ -484,19 +779,19 @@ const Navbar = () => {
                   type="button"
                   onClick={handleLogout}
                   className="btn-danger btn-sm"
-                  style={{ width: '100%', marginTop: '12px', justifyContent: 'center' }}
+                  style={{ width: '100%', marginTop: '10px', height: '40px', justifyContent: 'center' }}
                 >
                   <LogOut size={16} />
-                  <span>Log Out</span>
+                  <span>Sign Out</span>
                 </button>
               </div>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '8px' }}>
-                <Link to="/login" className="btn-secondary" onClick={() => setMobileMenuOpen(false)}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '6px' }}>
+                <Link to="/login" className="btn-secondary" style={{ height: '42px' }} onClick={() => setMobileMenuOpen(false)}>
                   <LogIn size={16} />
-                  <span>Sign In</span>
+                  <span>Log In</span>
                 </Link>
-                <Link to="/register" className="btn-primary" onClick={() => setMobileMenuOpen(false)}>
+                <Link to="/register" className="btn-primary" style={{ height: '42px' }} onClick={() => setMobileMenuOpen(false)}>
                   <UserPlus size={16} />
                   <span>Create Account</span>
                 </Link>
@@ -505,8 +800,95 @@ const Navbar = () => {
           </div>
         )}
 
-        {/* Responsive CSS Media Queries */}
+        {/* Global Component Styles for Modern Navbar */}
         <style>{`
+          .nav-tab-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 0 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            position: relative;
+            transition: color 0.15s ease;
+          }
+          .nav-tab-item:hover {
+            color: var(--color-text-primary);
+          }
+          .nav-tab-item.active {
+            color: var(--color-primary);
+            font-weight: 700;
+          }
+          .nav-tab-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 14px;
+            right: 14px;
+            height: 3px;
+            background-color: var(--color-primary);
+            border-radius: 3px 3px 0 0;
+          }
+
+          .dropdown-menu-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-text-primary);
+            text-decoration: none;
+            transition: background-color 0.15s ease, color 0.15s ease;
+          }
+          .dropdown-menu-link:hover {
+            background-color: var(--color-bg-page);
+            color: var(--color-primary);
+          }
+
+          .mobile-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 14px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            text-decoration: none;
+            transition: background-color 0.15s ease;
+          }
+          .mobile-nav-link.active {
+            color: var(--color-primary);
+            background-color: var(--color-primary-tint);
+            font-weight: 700;
+          }
+
+          @keyframes popoverFadeIn {
+            from {
+              opacity: 0;
+              transform: translateY(-6px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+
+          @keyframes drawerSlideDown {
+            from {
+              opacity: 0;
+              transform: translateY(-10px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+
           @media (max-width: 992px) {
             .desktop-nav-center {
               display: none !important;
@@ -514,7 +896,10 @@ const Navbar = () => {
             .desktop-nav-right {
               display: none !important;
             }
-            .campus-location-pill {
+            .navbar-brand-divider {
+              display: none !important;
+            }
+            .campus-location-selector {
               display: none !important;
             }
             .mobile-header-controls {
@@ -645,7 +1030,7 @@ const Navbar = () => {
         </nav>
       )}
 
-      {/* Style rule to activate bottom bar only on mobile screens (< 768px) */}
+      {/* Responsive Guard for Mobile Page Padding */}
       <style>{`
         @media (max-width: 768px) {
           .mobile-bottom-nav {
